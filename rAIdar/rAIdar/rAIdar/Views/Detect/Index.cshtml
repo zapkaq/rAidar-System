@@ -1,0 +1,767 @@
+﻿
+@model rAIdar.Models.MediaUploadModel
+@using System.Text.Json
+@using System.Globalization
+
+@{
+    ViewData["Title"] = "Detect Media";
+
+    bool isVideo = ViewBag.IsVideo == true;
+    bool isAudio = ViewBag.IsAudio == true;
+
+    string prediction = ViewBag.Prediction as string ?? "";
+    string mediaPath = ViewBag.FilePath as string ?? "";
+    string message = ViewBag.Message as string ?? "";
+    string audioWarning = ViewBag.AudioWarning as string ?? "";
+
+    string frameJson = ViewBag.FrameResults as string ?? "[]";
+    var frameResults = new List<JsonElement>();
+
+    try
+    {
+        using var frameDocument = JsonDocument.Parse(frameJson);
+
+        if (frameDocument.RootElement.ValueKind == JsonValueKind.Array)
+        {
+            frameResults = frameDocument.RootElement
+                .EnumerateArray()
+                .Select(frame => frame.Clone())
+                .ToList();
+        }
+    }
+    catch (JsonException)
+    {
+        frameResults = new List<JsonElement>();
+    }
+
+    double confidence = ViewBag.Confidence == null
+        ? 0
+        : Convert.ToDouble(ViewBag.Confidence);
+
+    double realScore = ViewBag.RealScore == null
+        ? 0
+        : Convert.ToDouble(ViewBag.RealScore);
+
+    double fakeScore = ViewBag.FakeScore == null
+        ? 0
+        : Convert.ToDouble(ViewBag.FakeScore);
+
+    double audioDuration = ViewBag.AudioDuration == null
+        ? 0
+        : Convert.ToDouble(ViewBag.AudioDuration);
+
+    int sampleRate = ViewBag.SampleRate == null
+        ? 16000
+        : Convert.ToInt32(ViewBag.SampleRate);
+
+    string predictionClass = prediction == "REAL"
+        ? "result-real"
+        : prediction == "FAKE"
+            ? "result-fake"
+            : "result-unknown";
+}
+
+<div class="detect-page">
+    <div class="container detect-container">
+
+        <!-- Page Heading -->
+        <div class="detect-heading">
+            <span class="detect-eyebrow">RAIDAR MEDIA ANALYSIS</span>
+            <h1>Analyze Your Digital Media</h1>
+            <p>
+                Upload an image, video, or audio file to receive
+                an AI-assisted media authenticity assessment.
+            </p>
+        </div>
+
+        <!-- Upload Card -->
+        <section class="detect-upload-card">
+            <div class="detect-card-heading">
+                <div>
+                    <h2>Upload Media</h2>
+                    <p>Select a file from your device to begin analysis.</p>
+                </div>
+                <div class="upload-heading-icon">AI</div>
+            </div>
+
+            <form id="detectForm"
+                  asp-controller="Detect"
+                  asp-action="Index"
+                  method="post"
+                  enctype="multipart/form-data">
+
+                <div class="detect-dropzone">
+                    <div class="upload-icon">↑</div>
+
+                    <h3>Choose a media file</h3>
+                    <p>
+                        Select an image, video, or audio file
+                        from your device.
+                    </p>
+
+                    <label for="mediaInput" class="detect-file-button">
+                        Browse Files
+                    </label>
+
+                    <input asp-for="MediaFile"
+                           id="mediaInput"
+                           class="detect-file-input"
+                           type="file"
+                           accept="image/*,video/*,audio/*"
+                           required />
+
+                    <div class="detect-file-limit">
+                        Maximum website upload size: 100 MB
+                    </div>
+                </div>
+
+                <span asp-validation-for="MediaFile"
+                      class="text-danger d-block mt-2"></span>
+
+                <!-- Selected File Information -->
+                <div id="selectedFileInfo" class="selected-file-info">
+                    <div class="selected-file-icon">FILE</div>
+                    <div class="selected-file-details">
+                        <strong id="selectedFileName">Selected file</strong>
+                        <span id="selectedFileMeta"></span>
+                    </div>
+                    <button type="button"
+                            id="removeFileBtn"
+                            class="remove-file-btn"
+                            aria-label="Remove selected file">
+                        ×
+                    </button>
+                </div>
+
+                <!-- Media Preview -->
+                <div id="previewContainer" class="detect-preview">
+                    <div class="preview-heading">Media Preview</div>
+
+                    <img id="imagePreview"
+                         alt="Selected image preview" />
+
+                    <video id="videoPreview"
+                           controls
+                           preload="metadata">
+                    </video>
+
+                    <audio id="audioPreview"
+                           controls
+                           preload="metadata">
+                    </audio>
+                </div>
+
+                <!-- Supported Formats -->
+                <div class="supported-formats">
+                    <div class="format-item">
+                        <span class="format-label format-image">IMG</span>
+                        <div>
+                            <strong>Images</strong>
+                            <small>JPG, JPEG, PNG</small>
+                        </div>
+                    </div>
+
+                    <div class="format-item">
+                        <span class="format-label format-video">VID</span>
+                        <div>
+                            <strong>Videos</strong>
+                            <small>MP4, MOV, AVI, MKV, WEBM</small>
+                        </div>
+                    </div>
+
+                    <div class="format-item">
+                        <span class="format-label format-audio">AUD</span>
+                        <div>
+                            <strong>Audio</strong>
+                            <small>WAV, MP3, FLAC, OGG, M4A</small>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="detect-submit-area">
+                    <button id="analyzeBtn"
+                            type="submit"
+                            class="detect-submit-btn"
+                            disabled>
+                        Analyze Media
+                    </button>
+                    <span class="submit-caption">
+                        Your file will be processed by the corresponding AI service.
+                    </span>
+                </div>
+            </form>
+        </section>
+
+        <!-- Error Message -->
+        @if (ViewBag.Error != null)
+        {
+            <div class="detect-error-message" role="alert">
+                <strong>Analysis could not be completed</strong>
+                <p>@ViewBag.Error</p>
+            </div>
+        }
+
+        <!-- Results -->
+        @if (ViewBag.Prediction != null)
+        {
+            <section class="detect-results-section" id="analysisResults">
+                <div class="results-section-heading">
+                    <span class="detect-eyebrow">ANALYSIS REPORT</span>
+                    <h2>Detection Results</h2>
+                    <p>Review the assessment returned by the AI detection service.</p>
+                </div>
+
+                <div class="results-grid">
+
+                    <!-- Media Preview Result -->
+                    <div class="result-media-card">
+                        <h3>Analyzed Media</h3>
+
+                        @if (isVideo)
+                        {
+                            <video class="result-media-preview"
+                                   controls
+                                   preload="metadata">
+                                <source src="@mediaPath" />
+                                Your browser does not support video playback.
+                            </video>
+                        }
+                        else if (isAudio)
+                        {
+                            <div class="result-audio-preview">
+                                <div class="result-audio-icon">AUD</div>
+                                <h4>Audio File</h4>
+                                <p>@ViewBag.FileName</p>
+
+                                <audio controls preload="metadata">
+                                    <source src="@mediaPath" />
+                                    Your browser does not support audio playback.
+                                </audio>
+                            </div>
+                        }
+                        else
+                        {
+                            <img src="@mediaPath"
+                                 alt="Analyzed image"
+                                 class="result-media-preview" />
+                        }
+
+                        <div class="result-file-name">
+                            <span>FILE NAME</span>
+                            <strong>@ViewBag.FileName</strong>
+                        </div>
+                    </div>
+
+                    <!-- Prediction Result -->
+                    <div class="result-information-card">
+                        <div class="result-complete-label">
+                            <span class="result-status-dot"></span>
+                            Analysis Complete
+                        </div>
+
+                        <div class="result-prediction-panel @predictionClass">
+                            <span class="result-label">PREDICTION</span>
+                            <strong>@prediction</strong>
+                            <small>
+                                @(prediction == "REAL"
+                                    ? "Classified as REAL by the detection model"
+                                    : prediction == "FAKE"
+                                        ? "Classified as FAKE by the detection model"
+                                        : "The model returned an unrecognized classification")
+                            </small>
+                        </div>
+
+                        <div class="result-detail-row">
+                            <span>Media Type</span>
+                            <strong>@(isVideo ? "Video" : isAudio ? "Audio" : "Image")</strong>
+                        </div>
+
+                        @if (isAudio)
+                        {
+                            <h4 class="score-section-title">Audio Model Scores</h4>
+
+                            <div class="score-row">
+                                <div class="score-heading">
+                                    <strong>Real score</strong>
+                                    <span>@realScore.ToString("F2")%</span>
+                                </div>
+                                <div class="detect-score-track">
+                                    <div class="detect-score-fill score-real-fill"
+                                         style="width:@Math.Clamp(realScore, 0, 100).ToString("F2", CultureInfo.InvariantCulture)%">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="score-row">
+                                <div class="score-heading">
+                                    <strong>Fake score</strong>
+                                    <span>@fakeScore.ToString("F2")%</span>
+                                </div>
+                                <div class="detect-score-track">
+                                    <div class="detect-score-fill score-fake-fill"
+                                         style="width:@Math.Clamp(fakeScore, 0, 100).ToString("F2", CultureInfo.InvariantCulture)%">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="result-detail-row">
+                                <span>Audio Duration</span>
+                                <strong>@audioDuration.ToString("F2") seconds</strong>
+                            </div>
+
+                            <div class="result-detail-row">
+                                <span>Sample Rate</span>
+                                <strong>@sampleRate.ToString("N0") Hz</strong>
+                            </div>
+
+                            @if (!string.IsNullOrWhiteSpace(audioWarning))
+                            {
+                                <div class="result-limitation">
+                                    <strong>Audio model limitation</strong>
+                                    <p>@audioWarning</p>
+                                </div>
+                            }
+                        }
+                        else
+                        {
+                            <div class="result-detail-row">
+                                <span>@(isVideo ? "Average Frame Score" : "Reported Confidence")</span>
+                                <strong>@confidence.ToString("F2")%</strong>
+                            </div>
+
+                            <div class="detect-score-track main-score-track">
+                                <div class="detect-score-fill @(prediction == "REAL" ? "score-real-fill" : "score-fake-fill")"
+                                     style="width:@Math.Clamp(confidence, 0, 100).ToString("F2", CultureInfo.InvariantCulture)%">
+                                </div>
+                            </div>
+                        }
+
+                        @if (!string.IsNullOrWhiteSpace(message))
+                        {
+                            <div class="result-model-message">
+                                <strong>Model Message</strong>
+                                <p>@message</p>
+                            </div>
+                        }
+                    </div>
+                </div>
+
+                <!-- Blockchain Verification Result -->
+                <div class="result-limitation mt-4"
+                     id="blockchainVerificationResult">
+                    <h3>Blockchain Media Verification</h3>
+
+                    <p>
+                        rAIdar generated a SHA-256 fingerprint from the
+                        uploaded media and checked it against Ethereum Sepolia.
+                    </p>
+
+                    @if (ViewBag.MediaHash != null)
+                    {
+                        <div class="result-detail-row">
+                            <span>SHA-256 Fingerprint</span>
+                            <code style="overflow-wrap:anywhere; word-break:break-all;">
+                                @ViewBag.MediaHash
+                            </code>
+                        </div>
+                    }
+
+                    @if (ViewBag.BlockchainChecked == true)
+                    {
+                        if (ViewBag.BlockchainRegistered == true)
+                        {
+                            <div class="result-detail-row" id="blockchainStatusRow">
+                                <span>Blockchain Status</span>
+                                <strong id="blockchainStatusText">Fingerprint Registered</strong>
+                            </div>
+
+                            <div id="blockchainRegisteredDetails">
+                                <div class="result-detail-row">
+                                    <span>Registered By</span>
+                                    <strong id="blockchainRegisteredBy">@ViewBag.BlockchainRegisteredBy</strong>
+                                </div>
+
+                                <div class="result-detail-row">
+                                    <span>Registration Time (UTC)</span>
+                                    <strong id="blockchainRegisteredAt">
+                                        @(((DateTime)ViewBag.BlockchainRegisteredAt)
+                                            .ToString("yyyy-MM-dd HH:mm:ss"))
+                                    </strong>
+                                </div>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="result-detail-row" id="blockchainStatusRow">
+                                <span>Blockchain Status</span>
+                                <strong id="blockchainStatusText">Fingerprint Not Registered</strong>
+                            </div>
+
+                            <p id="blockchainNotRegisteredMessage">
+                                This exact file fingerprint was not found
+                                in the rAIdar Ethereum smart contract.
+                            </p>
+
+                            <button type="button"
+                                    id="registerBlockchainBtn"
+                                    class="detect-submit-btn"
+                                    data-register-url="@Url.Action("RegisterFingerprint", "Detect")">
+                                Register on Blockchain
+                            </button>
+
+                            <p id="blockchainRegistrationMessage"
+                               role="status"
+                               aria-live="polite"
+                               class="mt-2"></p>
+
+                            <div id="blockchainRegisteredDetails"></div>
+                        }
+                    }
+                    else
+                    {
+                        <p>
+                            @(ViewBag.BlockchainError ??
+                                "Blockchain verification could not be completed.")
+                        </p>
+                    }
+
+                    <p>
+                        <strong>Note:</strong>
+                        A registered fingerprint confirms that the exact
+                        file was recorded on the blockchain. It does not
+                        prove that the media is authentic or AI-generated.
+                    </p>
+                </div>
+
+                @if (isVideo)
+                {
+                    <div class="result-limitation mt-4">
+                        <strong>Video screening limitation</strong>
+                        <p>
+                            This result averages predictions from sampled frames.
+                            It does not analyze motion or guarantee video authenticity.
+                        </p>
+                        <div class="result-detail-row">
+                            <span>Frames Analyzed</span>
+                            <strong>@ViewBag.FramesAnalyzed</strong>
+                        </div>
+                    </div>
+                }
+
+                <!-- Video Frame Results -->
+                @if (isVideo && frameResults.Count > 0)
+                {
+                    <div class="frame-results-card">
+                        <div class="frame-results-heading">
+                            <div>
+                                <h3>Sampled Frame Results</h3>
+                                <p>Individual results returned for the sampled video frames.</p>
+                            </div>
+                            <span class="frame-count">@frameResults.Count Frames</span>
+                        </div>
+
+                        <div class="table-responsive">
+                            <table class="table detect-results-table align-middle mb-0">
+                                <thead>
+                                    <tr>
+                                        <th>Frame</th>
+                                        <th>Prediction</th>
+                                        <th>Reported Score</th>
+                                        <th>Raw Model Output</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var frame in frameResults)
+                                    {
+                                        string framePrediction =
+                                            frame.TryGetProperty("prediction", out var labelElement)
+                                                ? labelElement.GetString() ?? "UNKNOWN"
+                                                : "UNKNOWN";
+
+                                        string frameConfidence =
+                                            frame.TryGetProperty("confidence", out var confidenceElement)
+                                                ? confidenceElement.ToString()
+                                                : "N/A";
+
+                                        string rawScore =
+                                            frame.TryGetProperty("raw_prediction", out var rawElement)
+                                                ? rawElement.ToString()
+                                                : "N/A";
+
+                                        string frameNumber =
+                                            frame.TryGetProperty("frame", out var numberElement)
+                                                ? numberElement.ToString()
+                                                : "N/A";
+
+                                        <tr>
+                                            <td>@frameNumber</td>
+                                            <td>
+                                                <span class="prediction-badge @(framePrediction == "REAL" ? "prediction-real" : "prediction-fake")">
+                                                    @framePrediction
+                                                </span>
+                                            </td>
+                                            <td>@frameConfidence%</td>
+                                            <td>@rawScore</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                }
+
+                <div class="detect-results-disclaimer">
+                    <strong>Important:</strong>
+                    AI detection results are assessments generated by machine-learning
+                    models. They should not be treated as definitive proof of authenticity.
+                </div>
+            </section>
+        }
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+
+    <script>
+        (() => {
+            const input = document.getElementById("mediaInput");
+            const form = document.getElementById("detectForm");
+            const previewContainer = document.getElementById("previewContainer");
+
+            const imagePreview = document.getElementById("imagePreview");
+            const videoPreview = document.getElementById("videoPreview");
+            const audioPreview = document.getElementById("audioPreview");
+
+            const selectedFileInfo = document.getElementById("selectedFileInfo");
+            const selectedFileName = document.getElementById("selectedFileName");
+            const selectedFileMeta = document.getElementById("selectedFileMeta");
+
+            const removeFileBtn = document.getElementById("removeFileBtn");
+            const analyzeButton = document.getElementById("analyzeBtn");
+
+            const registerBlockchainBtn =
+                document.getElementById("registerBlockchainBtn");
+            const blockchainRegistrationMessage =
+                document.getElementById("blockchainRegistrationMessage");
+            const blockchainRegisteredDetails =
+                document.getElementById("blockchainRegisteredDetails");
+
+            let currentPreviewUrl = null;
+
+            function clearPreview() {
+                imagePreview.style.display = "none";
+                videoPreview.style.display = "none";
+                audioPreview.style.display = "none";
+
+                imagePreview.removeAttribute("src");
+                videoPreview.removeAttribute("src");
+                audioPreview.removeAttribute("src");
+
+                videoPreview.load();
+                audioPreview.load();
+
+                if (currentPreviewUrl) {
+                    URL.revokeObjectURL(currentPreviewUrl);
+                    currentPreviewUrl = null;
+                }
+
+                previewContainer.style.display = "none";
+            }
+
+            function formatFileSize(bytes) {
+                if (bytes < 1024 * 1024) {
+                    return (bytes / 1024).toFixed(1) + " KB";
+                }
+
+                return (bytes / (1024 * 1024)).toFixed(2) + " MB";
+            }
+
+            function resetSelection() {
+                input.value = "";
+                clearPreview();
+                selectedFileInfo.style.display = "none";
+                analyzeButton.disabled = true;
+                analyzeButton.textContent = "Analyze Media";
+            }
+
+            input.addEventListener("change", function () {
+                clearPreview();
+
+                const file = this.files[0];
+
+                if (!file) {
+                    selectedFileInfo.style.display = "none";
+                    analyzeButton.disabled = true;
+                    return;
+                }
+
+                const extension = file.name.split(".").pop().toLowerCase();
+
+                const imageExtensions = ["jpg", "jpeg", "png"];
+                const videoExtensions = ["mp4", "mov", "avi", "mkv", "webm"];
+                const audioExtensions = ["wav", "mp3", "flac", "ogg", "m4a"];
+
+                const isImage = imageExtensions.includes(extension);
+                const isVideo = videoExtensions.includes(extension);
+                const isAudio = audioExtensions.includes(extension);
+
+                if (!isImage && !isVideo && !isAudio) {
+                    alert("Unsupported file type. Please select a supported image, video, or audio file.");
+                    resetSelection();
+                    return;
+                }
+
+                currentPreviewUrl = URL.createObjectURL(file);
+
+                selectedFileInfo.style.display = "flex";
+                selectedFileName.textContent = file.name;
+                selectedFileMeta.textContent =
+                    (isImage ? "Image" : isVideo ? "Video" : "Audio") +
+                    " · " + formatFileSize(file.size);
+
+                previewContainer.style.display = "block";
+
+                if (isImage) {
+                    imagePreview.src = currentPreviewUrl;
+                    imagePreview.style.display = "block";
+                }
+                else if (isVideo) {
+                    videoPreview.src = currentPreviewUrl;
+                    videoPreview.style.display = "block";
+                    videoPreview.load();
+                }
+                else if (isAudio) {
+                    audioPreview.src = currentPreviewUrl;
+                    audioPreview.style.display = "block";
+                    audioPreview.load();
+                }
+
+                analyzeButton.disabled = false;
+            });
+
+            removeFileBtn.addEventListener("click", resetSelection);
+
+            if (registerBlockchainBtn) {
+                registerBlockchainBtn.addEventListener("click", async function () {
+                    const tokenInput =
+                        document.querySelector('input[name="__RequestVerificationToken"]');
+
+                    if (!tokenInput) {
+                        blockchainRegistrationMessage.textContent =
+                            "Security token was not found. Refresh the page and try again.";
+                        return;
+                    }
+
+                    registerBlockchainBtn.disabled = true;
+                    registerBlockchainBtn.textContent =
+                        "Registering... Please wait";
+                    blockchainRegistrationMessage.textContent =
+                        "Submitting the fingerprint to Ethereum Sepolia. Please wait for confirmation.";
+
+                    try {
+                        const response = await fetch(
+                            registerBlockchainBtn.dataset.registerUrl,
+                            {
+                                method: "POST",
+                                headers: {
+                                    "RequestVerificationToken": tokenInput.value
+                                }
+                            }
+                        );
+
+                        const result = await response.json();
+
+                        if (!response.ok || !result.success) {
+                            throw new Error(
+                                result.message || "Blockchain registration failed."
+                            );
+                        }
+
+                        const statusText =
+                            document.getElementById("blockchainStatusText");
+                        if (statusText) {
+                            statusText.textContent = "Fingerprint Registered";
+                        }
+
+                        const notRegisteredMessage =
+                            document.getElementById("blockchainNotRegisteredMessage");
+                        if (notRegisteredMessage) {
+                            notRegisteredMessage.remove();
+                        }
+
+                        const registeredByRow = document.createElement("div");
+                        registeredByRow.className = "result-detail-row";
+
+                        const registeredByLabel = document.createElement("span");
+                        registeredByLabel.textContent = "Registered By";
+
+                        const registeredByValue = document.createElement("strong");
+                        registeredByValue.textContent = result.registeredBy;
+
+                        registeredByRow.append(
+                            registeredByLabel,
+                            registeredByValue
+                        );
+
+                        const registeredAtRow = document.createElement("div");
+                        registeredAtRow.className = "result-detail-row";
+
+                        const registeredAtLabel = document.createElement("span");
+                        registeredAtLabel.textContent = "Registration Time (UTC)";
+
+                        const registeredAtValue = document.createElement("strong");
+                        registeredAtValue.textContent = result.registeredAtUtc;
+
+                        registeredAtRow.append(
+                            registeredAtLabel,
+                            registeredAtValue
+                        );
+
+                        blockchainRegisteredDetails.replaceChildren(
+                            registeredByRow,
+                            registeredAtRow
+                        );
+
+                        const transactionLink = document.createElement("a");
+                        transactionLink.href = result.transactionUrl;
+                        transactionLink.target = "_blank";
+                        transactionLink.rel = "noopener noreferrer";
+                        transactionLink.textContent = "View transaction on Etherscan";
+
+                        blockchainRegistrationMessage.textContent =
+                            result.message + " ";
+
+                        blockchainRegistrationMessage.appendChild(transactionLink);
+                        registerBlockchainBtn.remove();
+                    }
+                    catch (error) {
+                        blockchainRegistrationMessage.textContent =
+                            error.message || "Blockchain registration failed.";
+
+                        registerBlockchainBtn.disabled = false;
+                        registerBlockchainBtn.textContent =
+                            "Try Registering Again";
+                    }
+                });
+            }
+
+            form.addEventListener("submit", function (event) {
+                if (!input.files || input.files.length === 0) {
+                    event.preventDefault();
+                    alert("Please select a media file first.");
+                    return;
+                }
+
+                analyzeButton.disabled = true;
+                analyzeButton.textContent = "Analyzing... Please wait";
+            });
+
+            window.addEventListener("beforeunload", function () {
+                if (currentPreviewUrl) {
+                    URL.revokeObjectURL(currentPreviewUrl);
+                }
+            });
+        })();
+    </script>
+}

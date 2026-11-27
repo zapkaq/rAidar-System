@@ -1,0 +1,572 @@
+﻿@{
+    ViewData["Title"] = "Blockchain Verification";
+}
+
+<style>
+    .blockchain-page {
+        padding: 60px 0 80px;
+        background: #f7f9fc;
+        min-height: 75vh;
+    }
+
+    .blockchain-header {
+        text-align: center;
+        margin-bottom: 40px;
+    }
+
+    .blockchain-header .eyebrow {
+        color: #2563eb;
+        font-size: 13px;
+        font-weight: 700;
+        letter-spacing: 2px;
+    }
+
+    .blockchain-header h1 {
+        font-size: clamp(28px, 4vw, 42px);
+        font-weight: 750;
+        color: #172033;
+        margin: 12px 0;
+    }
+
+    .blockchain-header p {
+        color: #667085;
+        max-width: 650px;
+        margin: 0 auto;
+        line-height: 1.7;
+    }
+
+    .blockchain-panel {
+        background: #ffffff;
+        border: 1px solid #e5eaf2;
+        border-radius: 18px;
+        padding: 30px;
+        box-shadow: 0 8px 30px rgba(15, 23, 42, 0.04);
+    }
+
+    .blockchain-panel h4 {
+        font-weight: 700;
+        color: #172033;
+    }
+
+    .blockchain-panel-description {
+        color: #667085;
+        font-size: 14px;
+        line-height: 1.6;
+    }
+
+    .upload-area {
+        border: 2px dashed #cbd5e1;
+        border-radius: 14px;
+        padding: 35px 20px;
+        text-align: center;
+        background: #f8fafc;
+        transition: 0.2s;
+    }
+
+    .upload-area:hover {
+        border-color: #2563eb;
+        background: #eff6ff;
+    }
+
+    .upload-area .upload-icon {
+        font-size: 38px;
+        color: #2563eb;
+        margin-bottom: 12px;
+    }
+
+    .upload-area p {
+        color: #667085;
+        margin-bottom: 12px;
+    }
+
+    .file-name {
+        font-size: 13px;
+        color: #2563eb;
+        font-weight: 600;
+        margin-top: 12px;
+        overflow-wrap: anywhere;
+    }
+
+    .blockchain-action {
+        border-radius: 10px;
+        padding: 12px 18px;
+        font-weight: 600;
+    }
+
+    .hash-result {
+        display: none;
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        padding: 18px;
+        margin-top: 22px;
+    }
+
+    .hash-value {
+        display: block;
+        color: #334155;
+        font-size: 13px;
+        overflow-wrap: anywhere;
+        word-break: break-all;
+        margin-top: 8px;
+    }
+
+    .result-panel {
+        display: none;
+        margin-top: 20px;
+        border-radius: 12px;
+        padding: 18px;
+        overflow-wrap: anywhere;
+    }
+
+    .result-success {
+        display: block;
+        background: #ecfdf3;
+        border: 1px solid #abefc6;
+        color: #067647;
+    }
+
+    .result-error {
+        display: block;
+        background: #fef3f2;
+        border: 1px solid #fecdca;
+        color: #b42318;
+    }
+
+    .result-info {
+        display: block;
+        background: #eff6ff;
+        border: 1px solid #bfdbfe;
+        color: #1d4ed8;
+    }
+
+    .result-detail {
+        margin-top: 12px;
+        font-size: 14px;
+        color: #344054;
+    }
+
+    .result-detail p {
+        margin-bottom: 7px;
+        overflow-wrap: anywhere;
+    }
+
+    .transaction-link {
+        display: inline-block;
+        margin-top: 8px;
+        font-weight: 600;
+    }
+
+    .blockchain-note {
+        color: #667085;
+        font-size: 13px;
+        line-height: 1.7;
+        margin-top: 25px;
+    }
+
+    .blockchain-network {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: #eff6ff;
+        color: #1d4ed8;
+        border-radius: 30px;
+        padding: 8px 14px;
+        font-size: 12px;
+        font-weight: 700;
+        margin-top: 18px;
+    }
+
+    .network-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: #2563eb;
+    }
+
+    @@media (max-width: 576px) {
+        .blockchain-panel {
+            padding: 20px;
+        }
+    }
+</style>
+
+<section class="blockchain-page">
+    <div class="container">
+
+        <!-- Page Heading -->
+        <div class="blockchain-header">
+            <span class="eyebrow">BLOCKCHAIN TECHNOLOGY</span>
+
+            <h1>Blockchain Media Verification</h1>
+
+            <p>
+                Generate a unique SHA-256 fingerprint for your media,
+                register it on the Ethereum blockchain, or verify
+                whether its fingerprint has already been registered.
+            </p>
+
+            <div class="blockchain-network">
+                <span class="network-dot"></span>
+                ETHEREUM SEPOLIA TESTNET
+            </div>
+        </div>
+
+        <div class="row justify-content-center">
+            <div class="col-lg-9">
+
+                <div class="blockchain-panel">
+
+                    <h4>Upload Your Media</h4>
+
+                    <p class="blockchain-panel-description">
+                        Select the original image, video, or audio
+                        file you want to fingerprint or verify.
+                    </p>
+
+                    <!-- File Upload -->
+                    <div class="upload-area mt-4">
+
+                        <div class="upload-icon">
+                            <i class="bi bi-cloud-arrow-up"></i>
+                        </div>
+
+                        <h5>Select a Media File</h5>
+
+                        <p>
+                            Supported media files can be uploaded
+                            for SHA-256 fingerprinting.
+                        </p>
+
+                        <input type="file"
+                               id="mediaFile"
+                               class="form-control"
+                               accept="image/*,video/*,audio/*" />
+
+                        <div id="fileName" class="file-name">
+                            No file selected
+                        </div>
+
+                    </div>
+
+                    <!-- Actions -->
+                    <div class="row g-3 mt-3">
+
+                        <div class="col-md-4">
+                            <button type="button"
+                                    id="generateHashButton"
+                                    class="btn btn-outline-primary w-100 blockchain-action">
+                                <i class="bi bi-fingerprint me-2"></i>
+                                Generate Hash
+                            </button>
+                        </div>
+
+                        <div class="col-md-4">
+                            <button type="button"
+                                    id="registerButton"
+                                    class="btn btn-primary w-100 blockchain-action">
+                                <i class="bi bi-shield-lock me-2"></i>
+                                Register Media
+                            </button>
+                        </div>
+
+                        <div class="col-md-4">
+                            <button type="button"
+                                    id="verifyButton"
+                                    class="btn btn-success w-100 blockchain-action">
+                                <i class="bi bi-patch-check me-2"></i>
+                                Verify Media
+                            </button>
+                        </div>
+
+                    </div>
+
+                    <!-- SHA-256 Result -->
+                    <div id="hashResult" class="hash-result">
+                        <strong>
+                            <i class="bi bi-fingerprint me-2"></i>
+                            SHA-256 Fingerprint
+                        </strong>
+
+                        <span id="hashValue" class="hash-value"></span>
+                    </div>
+
+                    <!-- Operation Result -->
+                    <div id="operationResult"
+                         class="result-panel"
+                         role="status"
+                         aria-live="polite">
+                    </div>
+
+                    <p class="blockchain-note">
+                        <strong>Important:</strong>
+                        Blockchain verification checks whether the exact
+                        uploaded file fingerprint has been registered.
+                        It does not independently determine whether media
+                        is AI-generated, authentic, or manipulated.
+                        Use rAIdar's AI detection feature for media analysis.
+                    </p>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+    const mediaFileInput = document.getElementById("mediaFile");
+    const fileNameDisplay = document.getElementById("fileName");
+
+    const generateHashButton =
+        document.getElementById("generateHashButton");
+
+    const registerButton =
+        document.getElementById("registerButton");
+
+    const verifyButton =
+        document.getElementById("verifyButton");
+
+    const hashResult = document.getElementById("hashResult");
+    const hashValue = document.getElementById("hashValue");
+    const operationResult =
+        document.getElementById("operationResult");
+
+    const maximumFileSize = 100 * 1024 * 1024;
+
+    mediaFileInput.addEventListener("change", function () {
+        const file = mediaFileInput.files[0];
+
+        if (!file) {
+            fileNameDisplay.textContent = "No file selected";
+            hashResult.style.display = "none";
+            clearResult();
+            return;
+        }
+
+        fileNameDisplay.textContent = file.name;
+
+        hashResult.style.display = "none";
+        clearResult();
+    });
+
+    function getSelectedFile() {
+        const file = mediaFileInput.files[0];
+
+        if (!file) {
+            showResult(
+                "error",
+                "Please select a media file first."
+            );
+
+            return null;
+        }
+
+        if (file.size === 0) {
+            showResult(
+                "error",
+                "The selected file is empty."
+            );
+
+            return null;
+        }
+
+        if (file.size > maximumFileSize) {
+            showResult(
+                "error",
+                "The maximum supported file size is 100 MB."
+            );
+
+            return null;
+        }
+
+        return file;
+    }
+
+    function showResult(type, message, details = "") {
+        operationResult.className = "result-panel result-" + type;
+
+        operationResult.innerHTML = "";
+
+        const messageElement = document.createElement("strong");
+        messageElement.textContent = message;
+
+        operationResult.appendChild(messageElement);
+
+        if (details) {
+            const detailsElement = document.createElement("div");
+            detailsElement.className = "result-detail";
+            detailsElement.textContent = details;
+
+            operationResult.appendChild(detailsElement);
+        }
+    }
+
+    function clearResult() {
+        operationResult.className = "result-panel";
+        operationResult.textContent = "";
+    }
+
+    function appendDetail(label, value) {
+        const paragraph = document.createElement("p");
+
+        const strong = document.createElement("strong");
+        strong.textContent = label + ": ";
+
+        const span = document.createElement("span");
+        span.textContent = value ?? "Not available";
+
+        paragraph.appendChild(strong);
+        paragraph.appendChild(span);
+
+        operationResult.appendChild(paragraph);
+    }
+
+    function appendTransactionLink(url) {
+        if (!url) {
+            return;
+        }
+
+        const link = document.createElement("a");
+
+        link.href = url;
+        link.target = "_blank";
+        link.rel = "noopener noreferrer";
+        link.className = "transaction-link";
+        link.textContent = "View Transaction on Etherscan";
+
+        operationResult.appendChild(link);
+    }
+
+    async function sendMediaRequest(endpoint, button) {
+        const file = getSelectedFile();
+
+        if (!file) {
+            return;
+        }
+
+        const originalText = button.innerHTML;
+
+        button.disabled = true;
+        button.innerHTML =
+            '<span class="spinner-border spinner-border-sm me-2"></span>Processing...';
+
+        clearResult();
+
+        const formData = new FormData();
+        formData.append("file", file);
+
+        try {
+            const response = await fetch(endpoint, {
+                method: "POST",
+                body: formData
+            });
+
+            const data = await response.json();
+
+            if (!response.ok || !data.success) {
+                throw new Error(
+                    data.message || "The request could not be completed."
+                );
+            }
+
+            if (data.hash) {
+                hashValue.textContent = data.hash;
+                hashResult.style.display = "block";
+            }
+
+            return data;
+
+        } catch (error) {
+            showResult(
+                "error",
+                error.message || "An unexpected error occurred."
+            );
+
+            return null;
+
+        } finally {
+            button.disabled = false;
+            button.innerHTML = originalText;
+        }
+    }
+
+    // Generate SHA-256 Fingerprint
+    generateHashButton.addEventListener("click", async function () {
+        const data = await sendMediaRequest(
+            "/api/blockchain/generate-hash",
+            generateHashButton
+        );
+
+        if (!data) {
+            return;
+        }
+
+        showResult(
+            "success",
+            "SHA-256 fingerprint generated successfully."
+        );
+
+        appendDetail("File name", data.fileName);
+        appendDetail("Algorithm", data.algorithm);
+        appendDetail("File size", data.fileSize + " bytes");
+    });
+
+    // Register Media on Ethereum
+    registerButton.addEventListener("click", async function () {
+        const data = await sendMediaRequest(
+            "/api/blockchain/register",
+            registerButton
+        );
+
+        if (!data) {
+            return;
+        }
+
+        showResult(
+            "success",
+            "Blockchain registration transaction submitted."
+        );
+
+        appendDetail("File name", data.fileName);
+        appendDetail("Algorithm", data.algorithm);
+        appendDetail("SHA-256", data.hash);
+        appendDetail("Transaction hash", data.transactionHash);
+
+        appendTransactionLink(data.transactionUrl);
+    });
+
+    // Verify Media on Ethereum
+    verifyButton.addEventListener("click", async function () {
+        const data = await sendMediaRequest(
+            "/api/blockchain/verify",
+            verifyButton
+        );
+
+        if (!data) {
+            return;
+        }
+
+        if (data.registered) {
+            showResult(
+                "success",
+                "Media fingerprint found on Ethereum blockchain."
+            );
+
+            appendDetail("File name", data.fileName);
+            appendDetail("SHA-256", data.hash);
+            appendDetail("Registered by", data.registeredBy);
+            appendDetail("Registered at", data.registeredAt);
+        }
+        else {
+            showResult(
+                "info",
+                "Media fingerprint was not found on Ethereum blockchain."
+            );
+
+            appendDetail("File name", data.fileName);
+            appendDetail("SHA-256", data.hash);
+            appendDetail("Registration status", "Not registered");
+        }
+    });
+</script>

@@ -1,0 +1,31 @@
+============================================================
+rAIdar MODEL EVALUATION
+============================================================
+Total images : 20000
+Fake images  : 10000
+Real images  : 10000
+
+Accuracy     : 46.31%
+Precision    : 47.94%
+Recall       : 85.87%
+F1-score     : 61.53%
+
+Confusion Matrix
+----------------
+                 Predicted
+              FAKE       REAL
+Actual FAKE     675       9325
+Actual REAL    1413       8587
+
+Classification Report
+----------------------
+              precision    recall  f1-score   support
+
+        FAKE     0.3233    0.0675    0.1117     10000
+        REAL     0.4794    0.8587    0.6153     10000
+
+    accuracy                         0.4631     20000
+   macro avg     0.4013    0.4631    0.3635     20000
+weighted avg     0.4013    0.4631    0.3635     20000
+
+============================================================

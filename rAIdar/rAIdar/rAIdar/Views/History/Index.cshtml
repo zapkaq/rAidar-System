@@ -1,0 +1,648 @@
+﻿@model IEnumerable<rAIdar.Models.DetectionHistory>
+
+@{
+    ViewData["Title"] = "Detection History";
+
+    var histories = Model?.ToList() ?? new List<rAIdar.Models.DetectionHistory>();
+
+    var videoExtensions = new[]
+    {
+        ".mp4", ".mov", ".avi", ".mkv", ".webm"
+    };
+
+    var audioExtensions = new[]
+    {
+        ".wav", ".mp3", ".flac", ".ogg", ".m4a"
+    };
+
+    int totalRecords = histories.Count;
+    int realRecords = histories.Count(h => h.Prediction == "REAL");
+    int fakeRecords = histories.Count(h => h.Prediction == "FAKE");
+    int registeredRecords = histories.Count(h => h.BlockchainRegistered);
+
+    string selectedPrediction = ViewBag.SelectedPrediction as string ?? "ALL";
+    string searchValue = ViewBag.Search as string ?? "";
+}
+
+<style>
+    .history-blockchain {
+        min-width: 260px;
+        max-width: 340px;
+        font-size: 12px;
+    }
+
+    .history-chain-status {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 6px 10px;
+        border-radius: 20px;
+        font-size: 11px;
+        font-weight: 700;
+        white-space: nowrap;
+    }
+
+        .history-chain-status.registered {
+            color: #087443;
+            background: #e8f7ef;
+        }
+
+        .history-chain-status.not-registered {
+            color: #946200;
+            background: #fff4d6;
+        }
+
+        .history-chain-status span {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: currentColor;
+        }
+
+    .history-chain-details {
+        margin-top: 10px;
+        display: flex;
+        flex-direction: column;
+        gap: 7px;
+        overflow-wrap: anywhere;
+    }
+
+        .history-chain-details small {
+            color: #68758a;
+            font-size: 11px;
+        }
+
+        .history-chain-details strong {
+            color: #26364d;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+    .history-hash {
+        display: block;
+        max-width: 310px;
+        overflow-wrap: anywhere;
+        word-break: break-all;
+        color: #a02c83;
+        font-family: monospace;
+        font-size: 10px;
+        line-height: 1.5;
+    }
+
+    .history-tx-link {
+        display: inline-block;
+        color: #1769c2;
+        font-weight: 600;
+        text-decoration: none;
+    }
+
+        .history-tx-link:hover {
+            text-decoration: underline;
+        }
+
+    .history-chain-empty {
+        color: #8993a2;
+        font-size: 11px;
+    }
+
+    .history-stat-chain-icon {
+        background: #e9f2ff;
+        color: #1769c2;
+    }
+
+    .history-table th {
+        white-space: nowrap;
+    }
+
+    .history-table td {
+        vertical-align: middle;
+    }
+
+    /* Transaction Recovery */
+    .history-recover-form {
+        margin-top: 10px;
+    }
+
+    .history-recover-btn {
+        display: inline-block;
+        padding: 7px 11px;
+        border: none;
+        border-radius: 6px;
+        background: #1769c2;
+        color: #fff;
+        font-size: 11px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background 0.2s ease;
+    }
+
+        .history-recover-btn:hover {
+            background: #12549c;
+        }
+
+        .history-recover-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+    .history-recover-message {
+        display: block;
+        margin-top: 6px;
+        font-size: 11px;
+        line-height: 1.5;
+        overflow-wrap: anywhere;
+    }
+
+        .history-recover-message.success {
+            color: #087443;
+        }
+
+        .history-recover-message.error {
+            color: #b42318;
+        }
+
+        .history-recover-message.loading {
+            color: #1769c2;
+        }
+</style>
+
+<div class="history-page">
+    <div class="container history-container">
+
+        <!-- Page Header -->
+        <div class="history-header">
+            <div>
+                <span class="history-eyebrow">MEDIA ANALYSIS RECORDS</span>
+                <h1>Detection History</h1>
+                <p>
+                    Review and manage your previously analyzed images,
+                    videos, and audio files.
+                </p>
+            </div>
+
+            <a asp-controller="Detect"
+               asp-action="Index"
+               class="history-new-btn">
+                <span>+</span> New Detection
+            </a>
+        </div>
+
+        <!-- Summary Cards -->
+        <div class="history-stats">
+
+            <div class="history-stat-card">
+                <div class="history-stat-icon stat-total-icon">ALL</div>
+                <div>
+                    <span>Total Records</span>
+                    <strong>@totalRecords</strong>
+                    <small>Matching records</small>
+                </div>
+            </div>
+
+            <div class="history-stat-card">
+                <div class="history-stat-icon stat-real-icon">REAL</div>
+                <div>
+                    <span>Real Predictions</span>
+                    <strong>@realRecords</strong>
+                    <small>Classified as REAL</small>
+                </div>
+            </div>
+
+            <div class="history-stat-card">
+                <div class="history-stat-icon stat-fake-icon">FAKE</div>
+                <div>
+                    <span>Fake Predictions</span>
+                    <strong>@fakeRecords</strong>
+                    <small>Classified as FAKE</small>
+                </div>
+            </div>
+
+            <div class="history-stat-card">
+                <div class="history-stat-icon history-stat-chain-icon">CHAIN</div>
+                <div>
+                    <span>Blockchain Registered</span>
+                    <strong>@registeredRecords</strong>
+                    <small>Verified fingerprints</small>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Search and Filter -->
+        <section class="history-filter-card">
+
+            <div class="history-filter-heading">
+                <div>
+                    <h2>Search and Filter</h2>
+                    <p>Find a detection record using its filename or prediction.</p>
+                </div>
+            </div>
+
+            <form asp-controller="History"
+                  asp-action="Index"
+                  method="get">
+
+                <div class="history-filter-fields">
+
+                    <div class="history-search-field">
+                        <label for="historySearch">Search Filename</label>
+
+                        <input type="text"
+                               id="historySearch"
+                               name="search"
+                               value="@searchValue"
+                               placeholder="Enter a filename..." />
+                    </div>
+
+                    <div class="history-prediction-field">
+                        <label for="historyPrediction">Prediction</label>
+
+                        <select id="historyPrediction"
+                                name="prediction">
+
+                            <option value="ALL"
+                                    selected="@(selectedPrediction == "ALL")">
+                                All Predictions
+                            </option>
+
+                            <option value="REAL"
+                                    selected="@(selectedPrediction == "REAL")">
+                                REAL
+                            </option>
+
+                            <option value="FAKE"
+                                    selected="@(selectedPrediction == "FAKE")">
+                                FAKE
+                            </option>
+
+                        </select>
+                    </div>
+
+                    <div class="history-filter-buttons">
+                        <button type="submit" class="history-filter-btn">
+                            Apply Filters
+                        </button>
+
+                        <a asp-controller="History"
+                           asp-action="Index"
+                           class="history-reset-btn">
+                            Reset
+                        </a>
+                    </div>
+
+                </div>
+            </form>
+        </section>
+
+        <!-- Detection Records -->
+        <section class="history-records-card">
+
+            <div class="history-records-header">
+                <div>
+                    <h2>All Detection Records</h2>
+                    <p>
+                        Your detection results, arranged from newest to oldest.
+                    </p>
+                </div>
+
+                <span class="history-record-count">
+                    @totalRecords @(totalRecords == 1 ? "Record" : "Records")
+                </span>
+            </div>
+
+            @if (!histories.Any())
+            {
+                <div class="history-empty-state">
+                    <div class="history-empty-icon">FILE</div>
+
+                    <h3>No Detection Records Found</h3>
+
+                    <p>
+                        There are no records matching your current search
+                        or filter. Try changing your search criteria.
+                    </p>
+
+                    <a asp-controller="Detect"
+                       asp-action="Index"
+                       class="history-new-btn">
+                        Start a New Detection
+                    </a>
+                </div>
+            }
+            else
+            {
+                <div class="table-responsive">
+                    <table class="table history-table align-middle">
+
+                        <thead>
+                            <tr>
+                                <th>Media</th>
+                                <th>Filename</th>
+                                <th>Media Type</th>
+                                <th>Prediction</th>
+                                <th>Confidence</th>
+                                <th>Date Analyzed</th>
+                                <th>Blockchain Verification</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            @foreach (var item in histories)
+                            {
+                                var extension = System.IO.Path
+                                    .GetExtension(item.FileName ?? "")
+                                    .ToLowerInvariant();
+
+                                var isVideo = Array.IndexOf(videoExtensions, extension) >= 0;
+                                var isAudio = Array.IndexOf(audioExtensions, extension) >= 0;
+
+                                string mediaType = isVideo
+                                    ? "Video"
+                                    : isAudio
+                                        ? "Audio"
+                                        : "Image";
+
+                                <tr>
+                                    <!-- Media Preview -->
+                                    <td>
+                                        <div class="history-media-preview">
+
+                                            @if (isVideo)
+                                            {
+                                                <video controls
+                                                       preload="metadata"
+                                                       aria-label="Video preview">
+                                                    <source src="@item.FilePath" />
+                                                    Your browser does not support video playback.
+                                                </video>
+                                            }
+                                            else if (isAudio)
+                                            {
+                                                <div class="history-audio-preview">
+                                                    <span>AUD</span>
+                                                    <small>Audio</small>
+                                                </div>
+                                            }
+                                            else
+                                            {
+                                                <img src="@item.FilePath"
+                                                     alt="@(item.FileName ?? "Analyzed image")"
+                                                     loading="lazy"
+                                                     onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+
+                                                <div class="history-missing-preview">
+                                                    IMG
+                                                </div>
+                                            }
+
+                                        </div>
+                                    </td>
+
+                                    <!-- Filename -->
+                                    <td>
+                                        <div class="history-filename">
+                                            <strong>@item.FileName</strong>
+                                            <small>Detection record</small>
+                                        </div>
+                                    </td>
+
+                                    <!-- Media Type -->
+                                    <td>
+                                        <span class="history-type-badge @(isVideo ? "type-video" : isAudio ? "type-audio" : "type-image")">
+                                            @mediaType
+                                        </span>
+                                    </td>
+
+                                    <!-- Prediction -->
+                                    <td>
+                                        @if (item.Prediction == "REAL")
+                                        {
+                                            <span class="history-prediction prediction-real">
+                                                <span></span> REAL
+                                            </span>
+                                        }
+                                        else if (item.Prediction == "FAKE")
+                                        {
+                                            <span class="history-prediction prediction-fake">
+                                                <span></span> FAKE
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="history-prediction prediction-other">
+                                                @item.Prediction
+                                            </span>
+                                        }
+                                    </td>
+
+                                    <!-- Confidence -->
+                                    <td>
+                                        <strong class="history-confidence">
+                                            @item.Confidence.ToString("0.00")%
+                                        </strong>
+                                    </td>
+
+                                    <!-- Date Analyzed -->
+                                    <td>
+                                        <div class="history-date">
+                                            <strong>
+                                                @item.DateAnalyzed.ToString("MMM dd, yyyy")
+                                            </strong>
+                                            <small>
+                                                @item.DateAnalyzed.ToString("hh:mm tt")
+                                            </small>
+                                        </div>
+                                    </td>
+
+                                    <!-- Blockchain Verification -->
+                                    <td>
+                                        <div class="history-blockchain">
+
+                                            @if (item.BlockchainRegistered)
+                                            {
+                                                <span class="history-chain-status registered">
+                                                    <span></span>
+                                                    Fingerprint Registered
+                                                </span>
+
+                                                <div class="history-chain-details">
+
+                                                    @if (!string.IsNullOrWhiteSpace(item.MediaHash))
+                                                    {
+                                                        <div>
+                                                            <small>SHA-256 Fingerprint</small>
+                                                            <code class="history-hash">@item.MediaHash</code>
+                                                        </div>
+                                                    }
+
+                                                    @if (!string.IsNullOrWhiteSpace(item.BlockchainRegisteredBy))
+                                                    {
+                                                        <div>
+                                                            <small>Registered By</small>
+                                                            <strong>@item.BlockchainRegisteredBy</strong>
+                                                        </div>
+                                                    }
+
+                                                    @if (!string.IsNullOrWhiteSpace(item.BlockchainTransactionHash))
+                                                    {
+                                                        <div>
+                                                            <small>Transaction</small>
+
+                                                            <a class="history-tx-link"
+                                                               href="https://sepolia.etherscan.io/tx/@item.BlockchainTransactionHash"
+                                                               target="_blank"
+                                                               rel="noopener noreferrer">
+                                                                View on Etherscan ↗
+                                                            </a>
+
+                                                            <code class="history-hash">@item.BlockchainTransactionHash</code>
+                                                        </div>
+                                                    }
+                                                    else
+                                                    {
+                                                        <div class="history-chain-empty">
+                                                            Transaction hash not available in database.
+                                                        </div>
+
+                                                        @if (!string.IsNullOrWhiteSpace(item.MediaHash))
+                                                        {
+                                                            <form asp-controller="Detect"
+                                                                  asp-action="RecoverTransactionHash"
+                                                                  method="post"
+                                                                  class="history-recover-form">
+
+                                                                @Html.AntiForgeryToken()
+
+                                                                <input type="hidden"
+                                                                       name="mediaHash"
+                                                                       value="@item.MediaHash" />
+
+                                                                <button type="submit"
+                                                                        class="history-recover-btn">
+                                                                    Recover Transaction Hash
+                                                                </button>
+
+                                                                <span class="history-recover-message"
+                                                                      aria-live="polite"></span>
+                                                            </form>
+                                                        }
+                                                    }
+
+                                                    @if (item.BlockchainRegisteredAtUtc.HasValue)
+                                                    {
+                                                        <div>
+                                                            <small>Registration Time (UTC)</small>
+                                                            <strong>
+                                                                @item.BlockchainRegisteredAtUtc.Value.ToString("MMM dd, yyyy HH:mm:ss") UTC
+                                                            </strong>
+                                                        </div>
+                                                    }
+
+                                                </div>
+                                            }
+                                            else
+                                            {
+                                                <span class="history-chain-status not-registered">
+                                                    <span></span>
+                                                    Not Registered
+                                                </span>
+
+                                                @if (!string.IsNullOrWhiteSpace(item.MediaHash))
+                                                {
+                                                    <div class="history-chain-details">
+                                                        <small>SHA-256 Fingerprint</small>
+                                                        <code class="history-hash">@item.MediaHash</code>
+                                                    </div>
+                                                }
+                                                else
+                                                {
+                                                    <div class="history-chain-empty">
+                                                        No fingerprint available.
+                                                    </div>
+                                                }
+                                            }
+
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+
+                    </table>
+                </div>
+            }
+
+        </section>
+
+        <div class="history-disclaimer">
+            <strong>Note:</strong>
+            Detection results are AI-generated assessments and should not
+            be considered definitive proof of media authenticity.
+            Blockchain registration confirms that a fingerprint was recorded
+            on the blockchain, not that the media is authentic.
+        </div>
+
+    </div>
+</div>
+
+<script>
+    document.addEventListener("submit", async function (event) {
+        const form = event.target.closest(".history-recover-form");
+
+        if (!form) {
+            return;
+        }
+
+        event.preventDefault();
+
+        const button = form.querySelector(".history-recover-btn");
+        const message = form.querySelector(".history-recover-message");
+
+        if (!button || !message) {
+            return;
+        }
+
+        button.disabled = true;
+        button.textContent = "Recovering...";
+
+        message.className = "history-recover-message loading";
+        message.textContent =
+            "Searching the blockchain for the original transaction...";
+
+        try {
+            const response = await fetch(form.action, {
+                method: "POST",
+                body: new FormData(form),
+                headers: {
+                    "X-Requested-With": "XMLHttpRequest"
+                }
+            });
+
+            const result = await response.json();
+
+            if (!response.ok || !result.success) {
+                throw new Error(
+                    result.message || "Unable to recover transaction hash."
+                );
+            }
+
+            message.className = "history-recover-message success";
+            message.textContent = result.message ||
+                "Transaction hash successfully recovered.";
+
+            button.textContent = "Recovery Successful";
+
+            setTimeout(function () {
+                window.location.reload();
+            }, 1200);
+
+        } catch (error) {
+            message.className = "history-recover-message error";
+            message.textContent = error.message ||
+                "An unexpected error occurred.";
+
+            button.disabled = false;
+            button.textContent = "Try Again";
+        }
+    });
+</script>

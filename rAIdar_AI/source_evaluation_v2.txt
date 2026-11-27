@@ -1,0 +1,389 @@
+============================================================
+       rAIdar - SOURCE-BY-SOURCE MODEL EVALUATION
+============================================================
+
+Model: deepfake_detector_tigas_cleaned_v2.keras
+Dataset: datasets\diverse_balanced_cleaned
+Total images: 400
+Number of sources: 19
+Decision threshold: 0.50
+
+CONFUSION MATRIX LEGEND:
+Fake correct = Actual FAKE predicted FAKE
+Fake predicted real = Actual FAKE predicted REAL
+Real predicted fake = Actual REAL predicted FAKE
+Real correct = Actual REAL predicted REAL
+
+SOURCE RESULTS
+----------------------------------------------------------------------------------------------------
+
+SOURCE: gaugan
+Total images: 20
+Fake images: 10
+Real images: 10
+Correct predictions: 7
+Accuracy: 0.3500
+Fake precision: 0.2857
+Fake recall: 0.2000
+Fake F1: 0.2353
+Real precision: 0.3846
+Real recall: 0.5000
+Real F1: 0.4348
+ROC-AUC: 0.2900
+
+Confusion matrix:
+[[2, 8],
+ [5, 5]]
+----------------------------------------------------------------------
+
+SOURCE: face
+Total images: 20
+Fake images: 10
+Real images: 10
+Correct predictions: 11
+Accuracy: 0.5500
+Fake precision: 0.5455
+Fake recall: 0.6000
+Fake F1: 0.5714
+Real precision: 0.5556
+Real recall: 0.5000
+Real F1: 0.5263
+ROC-AUC: 0.5000
+
+Confusion matrix:
+[[6, 4],
+ [5, 5]]
+----------------------------------------------------------------------
+
+SOURCE: wuk
+Total images: 20
+Fake images: 10
+Real images: 10
+Correct predictions: 11
+Accuracy: 0.5500
+Fake precision: 0.5714
+Fake recall: 0.4000
+Fake F1: 0.4706
+Real precision: 0.5385
+Real recall: 0.7000
+Real F1: 0.6087
+ROC-AUC: 0.7500
+
+Confusion matrix:
+[[4, 6],
+ [3, 7]]
+----------------------------------------------------------------------
+
+SOURCE: VQDM
+Total images: 22
+Fake images: 11
+Real images: 11
+Correct predictions: 13
+Accuracy: 0.5909
+Fake precision: 0.7500
+Fake recall: 0.2727
+Fake F1: 0.4000
+Real precision: 0.5556
+Real recall: 0.9091
+Real F1: 0.6897
+ROC-AUC: 0.5537
+
+Confusion matrix:
+[[3, 8],
+ [1, 10]]
+----------------------------------------------------------------------
+
+SOURCE: biggan
+Total images: 20
+Fake images: 10
+Real images: 10
+Correct predictions: 12
+Accuracy: 0.6000
+Fake precision: 0.6000
+Fake recall: 0.6000
+Fake F1: 0.6000
+Real precision: 0.6000
+Real recall: 0.6000
+Real F1: 0.6000
+ROC-AUC: 0.6700
+
+Confusion matrix:
+[[6, 4],
+ [4, 6]]
+----------------------------------------------------------------------
+
+SOURCE: art002_2
+Total images: 22
+Fake images: 11
+Real images: 11
+Correct predictions: 14
+Accuracy: 0.6364
+Fake precision: 0.6667
+Fake recall: 0.5455
+Fake F1: 0.6000
+Real precision: 0.6154
+Real recall: 0.7273
+Real F1: 0.6667
+ROC-AUC: 0.8595
+
+Confusion matrix:
+[[6, 5],
+ [3, 8]]
+----------------------------------------------------------------------
+
+SOURCE: sd15_2
+Total images: 20
+Fake images: 10
+Real images: 10
+Correct predictions: 13
+Accuracy: 0.6500
+Fake precision: 0.6364
+Fake recall: 0.7000
+Fake F1: 0.6667
+Real precision: 0.6667
+Real recall: 0.6000
+Real F1: 0.6316
+ROC-AUC: 0.7400
+
+Confusion matrix:
+[[7, 3],
+ [4, 6]]
+----------------------------------------------------------------------
+
+SOURCE: sd_xl
+Total images: 20
+Fake images: 10
+Real images: 10
+Correct predictions: 13
+Accuracy: 0.6500
+Fake precision: 0.8000
+Fake recall: 0.4000
+Fake F1: 0.5333
+Real precision: 0.6000
+Real recall: 0.9000
+Real F1: 0.7200
+ROC-AUC: 0.7800
+
+Confusion matrix:
+[[4, 6],
+ [1, 9]]
+----------------------------------------------------------------------
+
+SOURCE: stargan
+Total images: 20
+Fake images: 10
+Real images: 10
+Correct predictions: 13
+Accuracy: 0.6500
+Fake precision: 0.6154
+Fake recall: 0.8000
+Fake F1: 0.6957
+Real precision: 0.7143
+Real recall: 0.5000
+Real F1: 0.5882
+ROC-AUC: 0.7200
+
+Confusion matrix:
+[[8, 2],
+ [5, 5]]
+----------------------------------------------------------------------
+
+SOURCE: Glide
+Total images: 22
+Fake images: 11
+Real images: 11
+Correct predictions: 15
+Accuracy: 0.6818
+Fake precision: 0.6429
+Fake recall: 0.8182
+Fake F1: 0.7200
+Real precision: 0.7500
+Real recall: 0.5455
+Real F1: 0.6316
+ROC-AUC: 0.8595
+
+Confusion matrix:
+[[9, 2],
+ [5, 6]]
+----------------------------------------------------------------------
+
+SOURCE: art001
+Total images: 22
+Fake images: 11
+Real images: 11
+Correct predictions: 15
+Accuracy: 0.6818
+Fake precision: 0.7000
+Fake recall: 0.6364
+Fake F1: 0.6667
+Real precision: 0.6667
+Real recall: 0.7273
+Real F1: 0.6957
+ROC-AUC: 0.6694
+
+Confusion matrix:
+[[7, 4],
+ [3, 8]]
+----------------------------------------------------------------------
+
+SOURCE: sd15_1
+Total images: 20
+Fake images: 10
+Real images: 10
+Correct predictions: 14
+Accuracy: 0.7000
+Fake precision: 0.7000
+Fake recall: 0.7000
+Fake F1: 0.7000
+Real precision: 0.7000
+Real recall: 0.7000
+Real F1: 0.7000
+ROC-AUC: 0.7800
+
+Confusion matrix:
+[[7, 3],
+ [3, 7]]
+----------------------------------------------------------------------
+
+SOURCE: ADM
+Total images: 22
+Fake images: 11
+Real images: 11
+Correct predictions: 16
+Accuracy: 0.7273
+Fake precision: 0.8571
+Fake recall: 0.5455
+Fake F1: 0.6667
+Real precision: 0.6667
+Real recall: 0.9091
+Real F1: 0.7692
+ROC-AUC: 0.8430
+
+Confusion matrix:
+[[6, 5],
+ [1, 10]]
+----------------------------------------------------------------------
+
+SOURCE: sd14
+Total images: 20
+Fake images: 10
+Real images: 10
+Correct predictions: 15
+Accuracy: 0.7500
+Fake precision: 0.8571
+Fake recall: 0.6000
+Fake F1: 0.7059
+Real precision: 0.6923
+Real recall: 0.9000
+Real F1: 0.7826
+ROC-AUC: 0.7900
+
+Confusion matrix:
+[[6, 4],
+ [1, 9]]
+----------------------------------------------------------------------
+
+SOURCE: art002_1
+Total images: 22
+Fake images: 11
+Real images: 11
+Correct predictions: 17
+Accuracy: 0.7727
+Fake precision: 1.0000
+Fake recall: 0.5455
+Fake F1: 0.7059
+Real precision: 0.6875
+Real recall: 1.0000
+Real F1: 0.8148
+ROC-AUC: 0.8264
+
+Confusion matrix:
+[[6, 5],
+ [0, 11]]
+----------------------------------------------------------------------
+
+SOURCE: Midjourney
+Total images: 22
+Fake images: 11
+Real images: 11
+Correct predictions: 18
+Accuracy: 0.8182
+Fake precision: 1.0000
+Fake recall: 0.6364
+Fake F1: 0.7778
+Real precision: 0.7333
+Real recall: 1.0000
+Real F1: 0.8462
+ROC-AUC: 0.8512
+
+Confusion matrix:
+[[7, 4],
+ [0, 11]]
+----------------------------------------------------------------------
+
+SOURCE: art002_3
+Total images: 22
+Fake images: 11
+Real images: 11
+Correct predictions: 19
+Accuracy: 0.8636
+Fake precision: 0.9000
+Fake recall: 0.8182
+Fake F1: 0.8571
+Real precision: 0.8333
+Real recall: 0.9091
+Real F1: 0.8696
+ROC-AUC: 0.9008
+
+Confusion matrix:
+[[9, 2],
+ [1, 10]]
+----------------------------------------------------------------------
+
+SOURCE: DALLE2
+Total images: 22
+Fake images: 11
+Real images: 11
+Correct predictions: 20
+Accuracy: 0.9091
+Fake precision: 1.0000
+Fake recall: 0.8182
+Fake F1: 0.9000
+Real precision: 0.8462
+Real recall: 1.0000
+Real F1: 0.9167
+ROC-AUC: 0.9669
+
+Confusion matrix:
+[[9, 2],
+ [0, 11]]
+----------------------------------------------------------------------
+
+SOURCE: art002_4
+Total images: 22
+Fake images: 11
+Real images: 11
+Correct predictions: 20
+Accuracy: 0.9091
+Fake precision: 1.0000
+Fake recall: 0.8182
+Fake F1: 0.9000
+Real precision: 0.8462
+Real recall: 1.0000
+Real F1: 0.9167
+ROC-AUC: 0.9917
+
+Confusion matrix:
+[[9, 2],
+ [0, 11]]
+----------------------------------------------------------------------
+
+BEST-PERFORMING SOURCE
+DALLE2: 90.91%
+
+LOWEST-PERFORMING SOURCE
+gaugan: 35.00%
+
+============================================================
+                 EVALUATION COMPLETE
+============================================================

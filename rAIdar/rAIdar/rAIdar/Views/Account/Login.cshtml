@@ -1,0 +1,148 @@
+﻿@{
+    ViewData["Title"] = "Login";
+}
+
+<style>
+    img.auth-brand-mark.raidar-brand-image {
+        display: inline-block;
+        width: 48px;
+        height: 48px;
+        object-fit: contain;
+        background: transparent;
+        border: none;
+        border-radius: 0;
+        box-shadow: none;
+        padding: 0;
+        flex-shrink: 0;
+    }
+</style>
+
+<section class="auth-page">
+    <div class="auth-container">
+        <div class="auth-card">
+
+            <!-- OFFICIAL rAIdar LOGO -->
+            <div class="auth-brand">
+                <img class="auth-brand-mark raidar-brand-image"
+                     src="~/images/raidar-logo.png"
+                     asp-append-version="true"
+                     alt="" />
+
+                <span>rAIdar</span>
+            </div>
+
+            <div class="auth-heading">
+                <span class="auth-eyebrow">WELCOME BACK</span>
+                <h1>Sign in to your account</h1>
+                <p>Access your media detection tools and analysis history.</p>
+            </div>
+
+            @if (TempData["Success"] != null)
+            {
+                <div class="auth-alert auth-alert-success" role="status">
+                    <span class="auth-alert-icon">✓</span>
+                    <span>@TempData["Success"]</span>
+                </div>
+            }
+
+            <div asp-validation-summary="ModelOnly"
+                 class="auth-validation-summary"
+                 role="alert"></div>
+
+            <form asp-controller="Account"
+                  asp-action="Login"
+                  method="post">
+
+                <div class="auth-form-group">
+                    <label for="username">Username</label>
+
+                    <input id="username"
+                           name="username"
+                           type="text"
+                           class="auth-input"
+                           placeholder="Enter your username"
+                           autocomplete="username"
+                           required />
+                </div>
+
+                <div class="auth-form-group">
+                    <div class="auth-label-row">
+                        <label for="loginPassword">Password</label>
+                    </div>
+
+                    <div class="auth-password-wrap">
+                        <input id="loginPassword"
+                               name="password"
+                               type="password"
+                               class="auth-input"
+                               placeholder="Enter your password"
+                               autocomplete="current-password"
+                               required />
+
+                        <button type="button"
+                                class="auth-password-toggle"
+                                data-password-toggle="loginPassword"
+                                aria-label="Show password"
+                                aria-pressed="false">
+                            Show
+                        </button>
+                    </div>
+                </div>
+
+                <button type="submit" class="auth-submit-btn">
+                    Sign In
+                    <span aria-hidden="true">→</span>
+                </button>
+
+            </form>
+
+            <div class="auth-divider">
+                <span>NEW TO rAIdar?</span>
+            </div>
+
+            <p class="auth-switch-text">
+                Don't have an account?
+
+                <a asp-controller="Account"
+                   asp-action="Register">
+                    Create an account
+                </a>
+            </p>
+
+            <div class="auth-security-note">
+                <span aria-hidden="true">●</span>
+                Your account gives you access to your personal detection records.
+            </div>
+
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    <script>
+        document.querySelectorAll("[data-password-toggle]").forEach(function (button) {
+            button.addEventListener("click", function () {
+                const inputId = button.getAttribute("data-password-toggle");
+                const input = document.getElementById(inputId);
+
+                if (!input) return;
+
+                const showPassword = input.type === "password";
+
+                input.type = showPassword ? "text" : "password";
+
+                button.textContent = showPassword ? "Hide" : "Show";
+
+                button.setAttribute(
+                    "aria-label",
+                    showPassword ? "Hide password" : "Show password"
+                );
+
+                button.setAttribute(
+                    "aria-pressed",
+                    showPassword ? "true" : "false"
+                );
+            });
+        });
+    </script>
+}

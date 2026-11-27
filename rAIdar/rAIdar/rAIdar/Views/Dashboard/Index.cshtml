@@ -1,0 +1,224 @@
+﻿
+@{
+    ViewData["Title"] = "Dashboard";
+
+    var recentDetections = ViewBag.RecentDetections as List<rAIdar.Models.DetectionHistory>;
+
+    var totalScans = ViewBag.TotalScans ?? 0;
+    var realImages = ViewBag.RealImages ?? 0;
+    var fakeImages = ViewBag.FakeImages ?? 0;
+}
+
+<div class="dashboard-page">
+    <div class="container py-5">
+
+        <!-- Dashboard Header -->
+        <div class="dashboard-header mb-5">
+            <div>
+                <span class="dashboard-eyebrow">USER DASHBOARD</span>
+                <h1>Welcome to rAIdar</h1>
+                <p>
+                    Monitor your detection activity and manage your digital media analysis.
+                </p>
+            </div>
+
+            <a asp-controller="Detect"
+               asp-action="Index"
+               class="btn dashboard-primary-btn">
+                + New Detection
+            </a>
+        </div>
+
+        <!-- Statistics -->
+        <div class="row g-4 mb-5">
+
+            <div class="col-md-4">
+                <div class="dashboard-stat-card">
+                    <div class="stat-icon stat-blue">TOTAL</div>
+                    <div class="stat-information">
+                        <span>Total Scans</span>
+                        <h2>@totalScans</h2>
+                        <small>All your recorded detections</small>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="dashboard-stat-card">
+                    <div class="stat-icon stat-green">REAL</div>
+                    <div class="stat-information">
+                        <span>Real Predictions</span>
+                        <h2>@realImages</h2>
+                        <small>Records classified as REAL</small>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="dashboard-stat-card">
+                    <div class="stat-icon stat-red">FAKE</div>
+                    <div class="stat-information">
+                        <span>Fake Predictions</span>
+                        <h2>@fakeImages</h2>
+                        <small>Records classified as FAKE</small>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="dashboard-section-heading">
+            <div>
+                <h3>Quick Actions</h3>
+                <p>Access your rAIdar tools and account.</p>
+            </div>
+        </div>
+
+        <div class="row g-4 mb-5">
+
+            <div class="col-md-4">
+                <a asp-controller="Detect"
+                   asp-action="Index"
+                   class="dashboard-action-card">
+                    <div class="action-icon action-blue">AI</div>
+                    <div>
+                        <h5>Detect Media</h5>
+                        <p>Analyze an image, video, or audio file.</p>
+                        <span>Start detection →</span>
+                    </div>
+                </a>
+            </div>
+
+            <div class="col-md-4">
+                <a asp-controller="History"
+                   asp-action="Index"
+                   class="dashboard-action-card">
+                    <div class="action-icon action-purple">H</div>
+                    <div>
+                        <h5>Detection History</h5>
+                        <p>Review your previous detection records.</p>
+                        <span>View history →</span>
+                    </div>
+                </a>
+            </div>
+
+            <div class="col-md-4">
+                <a asp-controller="Profile"
+                   asp-action="Index"
+                   class="dashboard-action-card">
+                    <div class="action-icon action-teal">P</div>
+                    <div>
+                        <h5>My Profile</h5>
+                        <p>Manage your personal account information.</p>
+                        <span>View profile →</span>
+                    </div>
+                </a>
+            </div>
+
+        </div>
+
+        <!-- Recent Detections -->
+        <div class="dashboard-history-card">
+
+            <div class="history-card-header">
+                <div>
+                    <h3>Recent Detections</h3>
+                    <p>Your five latest recorded analyses.</p>
+                </div>
+
+                <a asp-controller="History"
+                   asp-action="Index"
+                   class="history-view-all">
+                    View All →
+                </a>
+            </div>
+
+            @if (recentDetections == null || !recentDetections.Any())
+            {
+                <div class="dashboard-empty-state">
+                    <div class="empty-state-icon">AI</div>
+                    <h5>No detections yet</h5>
+                    <p>
+                        Your recent detection records will appear here
+                        after you analyze media.
+                    </p>
+                    <a asp-controller="Detect"
+                       asp-action="Index"
+                       class="btn dashboard-primary-btn">
+                        Start Your First Detection
+                    </a>
+                </div>
+            }
+            else
+            {
+                <div class="table-responsive">
+                    <table class="table dashboard-table align-middle mb-0">
+                        <thead>
+                            <tr>
+                                <th>Media</th>
+                                <th>Prediction</th>
+                                <th>Confidence</th>
+                                <th>Date Analyzed</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            @foreach (var item in recentDetections)
+                            {
+                                <tr>
+                                    <td>
+                                        <div class="media-cell">
+                                            <div class="media-file-icon">FILE</div>
+                                            <span>Detection Record</span>
+                                        </div>
+                                    </td>
+
+                                    <td>
+                                        @if (item.Prediction == "REAL")
+                                        {
+                                            <span class="prediction-badge prediction-real">
+                                                REAL
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="prediction-badge prediction-fake">
+                                                FAKE
+                                            </span>
+                                        }
+                                    </td>
+
+                                    <td>
+                                        <strong class="confidence-value">
+                                            @item.Confidence.ToString("0.00")%
+                                        </strong>
+                                    </td>
+
+                                    <td>
+                                        <span class="date-value">
+                                            @item.DateAnalyzed.ToString("MMM dd, yyyy")
+                                        </span>
+                                        <small class="date-time">
+                                            @item.DateAnalyzed.ToString("hh:mm tt")
+                                        </small>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+
+        </div>
+
+        <!-- Dashboard Notice -->
+        <div class="dashboard-notice mt-4">
+            <strong>Important:</strong>
+            Detection results are AI-generated assessments.
+            They should be interpreted carefully and are not definitive
+            proof of media authenticity.
+        </div>
+
+    </div>
+</div>

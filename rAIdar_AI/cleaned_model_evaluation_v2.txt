@@ -1,0 +1,44 @@
+
+=====================================================
+       CLEANED DATASET - MODEL V2 EVALUATION
+=====================================================
+
+Model: deepfake_detector_tigas_cleaned_v2.keras
+Dataset: datasets\diverse_balanced_cleaned\test
+
+Total test images: 400
+Threshold: 0.5
+
+---------------- OVERALL METRICS ----------------
+
+Accuracy:  0.6900 (69.00%)
+Precision: 0.6624
+Recall:    0.7750
+F1-score:  0.7143
+ROC-AUC:   0.7710
+
+---------------- CONFUSION MATRIX ----------------
+
+Rows = Actual
+Columns = Predicted
+
+Labels: FAKE (0), REAL (1)
+
+[[121  79]
+ [ 45 155]]
+
+---------------- CLASSIFICATION REPORT ----------------
+
+              precision    recall  f1-score   support
+
+        FAKE     0.7289    0.6050    0.6612       200
+        REAL     0.6624    0.7750    0.7143       200
+
+    accuracy                         0.6900       400
+   macro avg     0.6957    0.6900    0.6877       400
+weighted avg     0.6957    0.6900    0.6877       400
+
+
+=====================================================
+                 EVALUATION COMPLETE
+=====================================================

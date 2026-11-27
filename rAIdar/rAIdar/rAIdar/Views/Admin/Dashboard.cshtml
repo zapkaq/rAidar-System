@@ -1,0 +1,288 @@
+﻿
+@model List<rAIdar.Models.DetectionHistory>
+
+@{
+    ViewData["Title"] = "Admin Dashboard";
+
+    var totalUsers = (int)(ViewBag.TotalUsers ?? 0);
+    var activeUsers = (int)(ViewBag.ActiveUsers ?? 0);
+    var totalScans = (int)(ViewBag.TotalScans ?? 0);
+    var realImages = (int)(ViewBag.RealImages ?? 0);
+    var fakeImages = (int)(ViewBag.FakeImages ?? 0);
+
+    var realPercentage = totalScans > 0
+        ? (double)realImages / totalScans * 100
+        : 0;
+
+    var fakePercentage = totalScans > 0
+        ? (double)fakeImages / totalScans * 100
+        : 0;
+}
+
+<div class="admin-page">
+    <div class="admin-container">
+
+        <!-- Page heading -->
+        <div class="admin-page-heading">
+            <div>
+                <span class="admin-eyebrow">SYSTEM MANAGEMENT</span>
+                <h1>Admin Dashboard</h1>
+                <p>Monitor platform activity, manage users, and review detection results.</p>
+            </div>
+
+            <a asp-controller="Admin"
+               asp-action="Reports"
+               class="admin-primary-btn">
+                <span>+</span> View Reports
+            </a>
+        </div>
+
+        <!-- Statistics -->
+        <section class="admin-stats-grid">
+
+            <div class="admin-stat-card">
+                <div class="admin-stat-top">
+                    <div class="admin-stat-icon blue">U</div>
+                    <span class="admin-stat-label">USER ACCOUNTS</span>
+                </div>
+                <div class="admin-stat-number">@totalUsers</div>
+                <div class="admin-stat-description">Total registered users</div>
+            </div>
+
+            <div class="admin-stat-card">
+                <div class="admin-stat-top">
+                    <div class="admin-stat-icon green">A</div>
+                    <span class="admin-stat-label">ACTIVE USERS</span>
+                </div>
+                <div class="admin-stat-number">@activeUsers</div>
+                <div class="admin-stat-description">Currently active accounts</div>
+            </div>
+
+            <div class="admin-stat-card">
+                <div class="admin-stat-top">
+                    <div class="admin-stat-icon purple">D</div>
+                    <span class="admin-stat-label">TOTAL SCANS</span>
+                </div>
+                <div class="admin-stat-number">@totalScans</div>
+                <div class="admin-stat-description">Recorded media analyses</div>
+            </div>
+
+            <div class="admin-stat-card">
+                <div class="admin-stat-top">
+                    <div class="admin-stat-icon red">F</div>
+                    <span class="admin-stat-label">FAKE PREDICTIONS</span>
+                </div>
+                <div class="admin-stat-number">@fakeImages</div>
+                <div class="admin-stat-description">Records classified as FAKE</div>
+            </div>
+
+        </section>
+
+        <!-- Prediction overview -->
+        <section class="admin-section-card">
+            <div class="admin-section-heading">
+                <div>
+                    <h2>Detection Overview</h2>
+                    <p>Distribution of recorded REAL and FAKE predictions.</p>
+                </div>
+                <span class="admin-section-tag">ALL RECORDS</span>
+            </div>
+
+            <div class="admin-prediction-grid">
+
+                <div class="admin-prediction-item">
+                    <div class="admin-prediction-heading">
+                        <span class="admin-result-dot real-dot"></span>
+                        <span>REAL Predictions</span>
+                        <strong>@realImages</strong>
+                    </div>
+                    <div class="admin-progress-track">
+                        <div class="admin-progress-fill real-fill"
+                             style="width: @realPercentage.ToString("0.##", System.Globalization.CultureInfo.InvariantCulture)%">
+                        </div>
+                    </div>
+                    <span class="admin-prediction-percentage">
+                        @realPercentage.ToString("0.0")%
+                    </span>
+                </div>
+
+                <div class="admin-prediction-item">
+                    <div class="admin-prediction-heading">
+                        <span class="admin-result-dot fake-dot"></span>
+                        <span>FAKE Predictions</span>
+                        <strong>@fakeImages</strong>
+                    </div>
+                    <div class="admin-progress-track">
+                        <div class="admin-progress-fill fake-fill"
+                             style="width: @fakePercentage.ToString("0.##", System.Globalization.CultureInfo.InvariantCulture)%">
+                        </div>
+                    </div>
+                    <span class="admin-prediction-percentage">
+                        @fakePercentage.ToString("0.0")%
+                    </span>
+                </div>
+
+            </div>
+
+            <p class="admin-note">
+                These percentages describe stored prediction records. They are not
+                measurements of the AI model's accuracy.
+            </p>
+        </section>
+
+        <!-- Quick actions -->
+        <section class="admin-quick-section">
+            <div class="admin-section-heading">
+                <div>
+                    <h2>Administration</h2>
+                    <p>Manage the rAIdar platform.</p>
+                </div>
+            </div>
+
+            <div class="admin-actions-grid">
+
+                <a asp-controller="Admin"
+                   asp-action="Users"
+                   class="admin-action-card">
+                    <div class="admin-action-icon blue">U</div>
+                    <div>
+                        <h3>User Management</h3>
+                        <p>View registered accounts and manage user status.</p>
+                        <span>Manage users →</span>
+                    </div>
+                </a>
+
+                <a asp-controller="Admin"
+                   asp-action="Reports"
+                   class="admin-action-card">
+                    <div class="admin-action-icon purple">R</div>
+                    <div>
+                        <h3>Detection Reports</h3>
+                        <p>Search and review recorded media detection results.</p>
+                        <span>View reports →</span>
+                    </div>
+                </a>
+
+                <a asp-controller="Admin"
+                   asp-action="Settings"
+                   class="admin-action-card">
+                    <div class="admin-action-icon green">S</div>
+                    <div>
+                        <h3>System Settings</h3>
+                        <p>View the application's system information.</p>
+                        <span>View settings →</span>
+                    </div>
+                </a>
+
+            </div>
+        </section>
+
+        <!-- Recent activity -->
+        <section class="admin-section-card admin-activity-card">
+
+            <div class="admin-section-heading">
+                <div>
+                    <h2>Recent Detection Activity</h2>
+                    <p>The latest 10 recorded detection activities.</p>
+                </div>
+
+                <a asp-controller="Admin"
+                   asp-action="Reports"
+                   class="admin-text-link">
+                    View all reports →
+                </a>
+            </div>
+
+            @if (Model == null || !Model.Any())
+            {
+                <div class="admin-empty-state">
+                    <div class="admin-empty-icon">D</div>
+                    <h3>No detection records yet</h3>
+                    <p>Detection activity will appear here when records are available.</p>
+                </div>
+            }
+            else
+            {
+                <div class="admin-table-wrapper">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>USER</th>
+                                <th>FILE</th>
+                                <th>PREDICTION</th>
+                                <th>CONFIDENCE</th>
+                                <th>DATE ANALYZED</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            @foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td>
+                                        <div class="admin-user-cell">
+                                            <div class="admin-user-avatar">
+                                                @(string.IsNullOrWhiteSpace(item.User?.Username)
+                                                    ? "?"
+                                                    : item.User.Username.Substring(0, 1).ToUpper())
+                                            </div>
+                                            <span>@(item.User?.Username ?? "Unknown User")</span>
+                                        </div>
+                                    </td>
+
+                                    <td>
+                                        <div class="admin-file-cell">
+                                            <span class="admin-file-name"
+                                                  title="@item.FileName">
+                                                @item.FileName
+                                            </span>
+                                        </div>
+                                    </td>
+
+                                    <td>
+                                        @if (item.Prediction == "REAL")
+                                        {
+                                            <span class="admin-status-badge real-badge">
+                                                <span></span> REAL
+                                            </span>
+                                        }
+                                        else if (item.Prediction == "FAKE")
+                                        {
+                                            <span class="admin-status-badge fake-badge">
+                                                <span></span> FAKE
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="admin-status-badge neutral-badge">
+                                                @(item.Prediction ?? "UNKNOWN")
+                                            </span>
+                                        }
+                                    </td>
+
+                                    <td class="admin-confidence">
+                                        @item.Confidence.ToString("0.00")%
+                                    </td>
+
+                                    <td>
+                                        <div class="admin-date-cell">
+                                            <strong>@item.DateAnalyzed.ToString("MMM dd, yyyy")</strong>
+                                            <span>@item.DateAnalyzed.ToString("hh:mm tt")</span>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+
+        </section>
+
+        <div class="admin-footer-note">
+            <span class="admin-footer-dot"></span>
+            rAIdar Administration Panel
+        </div>
+
+    </div>
+</div>

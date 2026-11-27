@@ -1,0 +1,161 @@
+﻿@model rAIdar.Models.RegisterViewModel
+
+@{
+    ViewData["Title"] = "Create Account";
+}
+
+<style>
+    img.auth-brand-mark.raidar-brand-image {
+        display: inline-block;
+        width: 48px;
+        height: 48px;
+        object-fit: contain;
+        background: transparent;
+        border: none;
+        border-radius: 0;
+        box-shadow: none;
+        padding: 0;
+        flex-shrink: 0;
+    }
+</style>
+
+<section class="auth-page auth-register-page">
+    <div class="auth-container auth-container-wide">
+        <div class="auth-card auth-register-card">
+
+            <!-- OFFICIAL rAIdar LOGO -->
+            <div class="auth-brand">
+                <img class="auth-brand-mark raidar-brand-image"
+                     src="~/images/raidar-logo.png"
+                     asp-append-version="true"
+                     alt="" />
+
+                <span>rAIdar</span>
+            </div>
+
+            <div class="auth-heading">
+                <span class="auth-eyebrow">GET STARTED</span>
+                <h1>Create your account</h1>
+                <p>Register to access rAIdar's digital media detection platform.</p>
+            </div>
+
+            <div asp-validation-summary="ModelOnly"
+                 class="auth-validation-summary"
+                 role="alert"></div>
+
+            <form asp-controller="Account" asp-action="Register" method="post">
+
+                <div class="auth-form-group">
+                    <label asp-for="FullName">Full Name</label>
+                    <input asp-for="FullName"
+                           class="auth-input"
+                           placeholder="Enter your full name"
+                           autocomplete="name" />
+                    <span asp-validation-for="FullName" class="auth-field-error"></span>
+                </div>
+
+                <div class="auth-form-group">
+                    <label asp-for="Email">Email Address</label>
+                    <input asp-for="Email"
+                           type="email"
+                           class="auth-input"
+                           placeholder="Enter your email address"
+                           autocomplete="email" />
+                    <span asp-validation-for="Email" class="auth-field-error"></span>
+                </div>
+
+                <div class="auth-form-group">
+                    <label asp-for="Username">Username</label>
+                    <input asp-for="Username"
+                           class="auth-input"
+                           placeholder="Choose a username"
+                           autocomplete="username" />
+                    <span asp-validation-for="Username" class="auth-field-error"></span>
+                </div>
+
+                <div class="auth-form-group">
+                    <label asp-for="Password">Password</label>
+                    <div class="auth-password-wrap">
+                        <input asp-for="Password"
+                               type="password"
+                               id="registerPassword"
+                               class="auth-input"
+                               placeholder="Create a password"
+                               autocomplete="new-password" />
+
+                        <button type="button"
+                                class="auth-password-toggle"
+                                data-password-toggle="registerPassword"
+                                aria-label="Show password"
+                                aria-pressed="false">
+                            Show
+                        </button>
+                    </div>
+                    <span asp-validation-for="Password" class="auth-field-error"></span>
+                </div>
+
+                <div class="auth-form-group">
+                    <label asp-for="ConfirmPassword">Confirm Password</label>
+                    <div class="auth-password-wrap">
+                        <input asp-for="ConfirmPassword"
+                               type="password"
+                               id="confirmPassword"
+                               class="auth-input"
+                               placeholder="Enter your password again"
+                               autocomplete="new-password" />
+
+                        <button type="button"
+                                class="auth-password-toggle"
+                                data-password-toggle="confirmPassword"
+                                aria-label="Show password"
+                                aria-pressed="false">
+                            Show
+                        </button>
+                    </div>
+                    <span asp-validation-for="ConfirmPassword" class="auth-field-error"></span>
+                </div>
+
+                <button type="submit" class="auth-submit-btn">
+                    Create Account
+                    <span aria-hidden="true">→</span>
+                </button>
+            </form>
+
+            <div class="auth-divider">
+                <span>ALREADY REGISTERED?</span>
+            </div>
+
+            <p class="auth-switch-text">
+                Already have an account?
+                <a asp-controller="Account" asp-action="Login">Sign in</a>
+            </p>
+
+            <div class="auth-security-note">
+                <span aria-hidden="true">●</span>
+                Your account information is used to manage your rAIdar access.
+            </div>
+
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+
+    <script>
+        document.querySelectorAll("[data-password-toggle]").forEach(function (button) {
+            button.addEventListener("click", function () {
+                const inputId = button.getAttribute("data-password-toggle");
+                const input = document.getElementById(inputId);
+
+                if (!input) return;
+
+                const showPassword = input.type === "password";
+                input.type = showPassword ? "text" : "password";
+                button.textContent = showPassword ? "Hide" : "Show";
+                button.setAttribute("aria-label", showPassword ? "Hide password" : "Show password");
+                button.setAttribute("aria-pressed", showPassword ? "true" : "false");
+            });
+        });
+    </script>
+}

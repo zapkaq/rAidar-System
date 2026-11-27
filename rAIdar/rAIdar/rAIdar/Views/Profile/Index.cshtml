@@ -1,0 +1,201 @@
+﻿
+@model rAIdar.Models.AppUser
+
+@{
+    ViewData["Title"] = "My Profile";
+
+    string fullName = Model.FullName ?? "User";
+    string initials = string.Join("",
+        fullName.Split(' ', StringSplitOptions.RemoveEmptyEntries)
+                .Take(2)
+                .Select(part => char.ToUpperInvariant(part[0])));
+
+    int totalDetections = ViewBag.TotalDetections ?? 0;
+    int realPredictions = ViewBag.RealImages ?? 0;
+    int fakePredictions = ViewBag.FakeImages ?? 0;
+}
+
+<div class="profile-page">
+    <div class="container profile-container">
+
+        <!-- Page Header -->
+        <div class="profile-page-header">
+            <div>
+                <span class="profile-eyebrow">ACCOUNT MANAGEMENT</span>
+                <h1>My Profile</h1>
+                <p>View your account information and detection activity.</p>
+            </div>
+
+            <a asp-controller="Dashboard"
+               asp-action="Index"
+               class="profile-back-btn">
+                <span>←</span> Back to Dashboard
+            </a>
+        </div>
+
+        <!-- Profile Overview -->
+        <div class="profile-overview">
+
+            <section class="profile-card profile-identity-card">
+                <div class="profile-avatar">
+                    @initials
+                </div>
+
+                <h2>@Model.FullName</h2>
+                <p class="profile-username">@@@Model.Username</p>
+
+                <span class="profile-role">
+                    @Model.Role
+                </span>
+
+                <div class="profile-account-status">
+                    @if (Model.IsActive)
+                    {
+                        <span class="profile-status-dot status-active"></span>
+                        <span>Active Account</span>
+                    }
+                    else
+                    {
+                        <span class="profile-status-dot status-inactive"></span>
+                        <span>Inactive Account</span>
+                    }
+                </div>
+
+                <div class="profile-member-since">
+                    <span>MEMBER SINCE</span>
+                    <strong>@Model.CreatedAt.ToString("MMMM dd, yyyy")</strong>
+                </div>
+            </section>
+
+            <!-- Account Information -->
+            <section class="profile-card profile-information-card">
+                <div class="profile-section-heading">
+                    <div>
+                        <h2>Account Information</h2>
+                        <p>Your registered account details.</p>
+                    </div>
+
+                    <span class="profile-section-icon">INFO</span>
+                </div>
+
+                <div class="profile-information-grid">
+
+                    <div class="profile-information-item">
+                        <label>Full Name</label>
+                        <div class="profile-information-value">
+                            <span class="profile-field-icon">FN</span>
+                            <strong>@Model.FullName</strong>
+                        </div>
+                    </div>
+
+                    <div class="profile-information-item">
+                        <label>Email Address</label>
+                        <div class="profile-information-value">
+                            <span class="profile-field-icon">EM</span>
+                            <strong>@Model.Email</strong>
+                        </div>
+                    </div>
+
+                    <div class="profile-information-item">
+                        <label>Username</label>
+                        <div class="profile-information-value">
+                            <span class="profile-field-icon">UN</span>
+                            <strong>@Model.Username</strong>
+                        </div>
+                    </div>
+
+                    <div class="profile-information-item">
+                        <label>Account Role</label>
+                        <div class="profile-information-value">
+                            <span class="profile-field-icon">RL</span>
+                            <strong>@Model.Role</strong>
+                        </div>
+                    </div>
+
+                    <div class="profile-information-item">
+                        <label>Registration Date</label>
+                        <div class="profile-information-value">
+                            <span class="profile-field-icon">DT</span>
+                            <strong>@Model.CreatedAt.ToString("MMMM dd, yyyy")</strong>
+                        </div>
+                    </div>
+
+                    <div class="profile-information-item">
+                        <label>Account Status</label>
+                        <div class="profile-information-value">
+                            <span class="profile-field-icon">ST</span>
+                            <strong>@(Model.IsActive ? "Active" : "Inactive")</strong>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="profile-readonly-note">
+                    <span>i</span>
+                    Your account information is currently displayed in read-only mode.
+                </div>
+            </section>
+
+        </div>
+
+        <!-- Detection Statistics -->
+        <section class="profile-card profile-statistics-card">
+
+            <div class="profile-section-heading">
+                <div>
+                    <h2>Detection Statistics</h2>
+                    <p>A summary of your recorded media detection activity.</p>
+                </div>
+
+                <span class="profile-section-icon">DATA</span>
+            </div>
+
+            <div class="profile-statistics-grid">
+
+                <div class="profile-stat-item">
+                    <div class="profile-stat-icon profile-stat-total">
+                        ALL
+                    </div>
+                    <div>
+                        <span>Total Detections</span>
+                        <strong>@totalDetections</strong>
+                        <small>All recorded analyses</small>
+                    </div>
+                </div>
+
+                <div class="profile-stat-item">
+                    <div class="profile-stat-icon profile-stat-real">
+                        REAL
+                    </div>
+                    <div>
+                        <span>REAL Predictions</span>
+                        <strong>@realPredictions</strong>
+                        <small>Classified as REAL</small>
+                    </div>
+                </div>
+
+                <div class="profile-stat-item">
+                    <div class="profile-stat-icon profile-stat-fake">
+                        FAKE
+                    </div>
+                    <div>
+                        <span>FAKE Predictions</span>
+                        <strong>@fakePredictions</strong>
+                        <small>Classified as FAKE</small>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="profile-statistics-footer">
+                <a asp-controller="History"
+                   asp-action="Index"
+                   class="profile-history-link">
+                    View Detection History →
+                </a>
+            </div>
+
+        </section>
+
+    </div>
+</div>

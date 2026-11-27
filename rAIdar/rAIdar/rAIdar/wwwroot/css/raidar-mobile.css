@@ -1,0 +1,285 @@
+﻿
+/* =========================================
+   rAIdar MOBILE RESPONSIVENESS
+   Additional responsive rules only.
+   Existing desktop design is preserved.
+========================================= */
+
+/* Prevent horizontal overflow */
+html,
+body {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
+}
+
+img,
+video,
+audio,
+canvas,
+iframe {
+    max-width: 100%;
+}
+
+/* Allow long text to wrap */
+.container,
+.raidar-main,
+main,
+section,
+.card {
+    min-width: 0;
+}
+
+@media (max-width: 991.98px) {
+
+    /* Navigation */
+    .raidar-navbar {
+        padding: 10px 0;
+    }
+
+        .raidar-navbar .navbar-collapse {
+            padding-top: 12px;
+        }
+
+        .raidar-navbar .navbar-nav {
+            align-items: stretch !important;
+            gap: 4px;
+        }
+
+        .raidar-navbar .nav-link {
+            display: block;
+            padding: 11px 12px;
+        }
+
+        .raidar-navbar .navbar-nav .btn {
+            display: block;
+            width: 100%;
+            margin: 5px 0;
+        }
+
+    /* Detection result columns */
+    .results-grid {
+        grid-template-columns: 1fr;
+    }
+
+    /* History filters */
+    .history-filter-fields {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .history-filter-buttons {
+        grid-column: 1 / -1;
+    }
+
+    /* Dashboard and admin headers */
+    .dashboard-header,
+    .admin-page-heading,
+    .history-header {
+        flex-wrap: wrap;
+        align-items: flex-start;
+    }
+
+    /* Admin panels */
+    .raidar-settings-layout {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 767.98px) {
+
+    /* General page spacing */
+    .container {
+        padding-left: 16px;
+        padding-right: 16px;
+    }
+
+    .detect-page,
+    .history-page {
+        padding: 30px 0 45px;
+    }
+
+    .dashboard-page {
+        padding-top: 25px;
+    }
+
+    .admin-page {
+        padding: 28px 12px 45px;
+    }
+
+    /* Navbar and brand */
+    .raidar-brand {
+        font-size: 22px;
+    }
+
+    .raidar-toggler {
+        padding: 6px 9px;
+    }
+
+    /* Headings */
+    .detect-heading h1,
+    .history-header h1,
+    .dashboard-header h1,
+    .admin-page-heading h1 {
+        font-size: 26px;
+        line-height: 1.3;
+    }
+
+    .detect-heading {
+        margin-bottom: 25px;
+    }
+
+    /* Detection upload */
+    .detect-upload-card,
+    .result-media-card,
+    .result-information-card,
+    .frame-results-card {
+        padding: 18px;
+    }
+
+    .detect-card-heading {
+        flex-wrap: wrap;
+        gap: 12px;
+    }
+
+    .detect-dropzone {
+        padding: 25px 12px;
+    }
+
+    .detect-submit-btn,
+    .detect-file-button {
+        max-width: 100%;
+    }
+
+    .selected-file-details {
+        flex-wrap: wrap;
+        overflow-wrap: anywhere;
+    }
+
+    /* Detection results */
+    .results-grid {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 15px;
+    }
+
+    .result-media-preview {
+        max-height: 280px;
+    }
+
+    .result-file-name {
+        overflow-wrap: anywhere;
+    }
+
+    /* Dashboard statistics */
+    .dashboard-stat-card,
+    .admin-stat-card,
+    .history-stat-card {
+        height: auto;
+    }
+
+    .dashboard-action-card,
+    .admin-action-card {
+        min-width: 0;
+    }
+
+    /* History filters */
+    .history-filter-card {
+        padding: 16px;
+    }
+
+    .history-filter-fields {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .history-filter-buttons {
+        display: flex;
+        flex-direction: column;
+        grid-column: auto;
+        gap: 9px;
+    }
+
+    .history-filter-btn,
+    .history-reset-btn {
+        width: 100%;
+    }
+
+    .history-records-header {
+        flex-wrap: wrap;
+        gap: 12px;
+    }
+
+    /* Tables remain usable through horizontal scrolling */
+    .table-responsive {
+        width: 100%;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .history-table,
+    .dashboard-table,
+    .admin-table,
+    .detect-results-table {
+        min-width: 650px;
+    }
+
+    /* Profile */
+    .profile-overview,
+    .profile-information-grid,
+    .profile-statistics-grid {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .profile-card {
+        min-width: 0;
+    }
+
+    /* Footer */
+    .raidar-footer {
+        margin-top: 35px;
+        padding: 32px 0 18px;
+    }
+
+    .footer-bottom {
+        overflow-wrap: anywhere;
+    }
+
+    /* Buttons and touch targets */
+    button,
+    .btn,
+    a.btn,
+    input,
+    select,
+    textarea {
+        max-width: 100%;
+    }
+
+    .btn,
+    button {
+        min-height: 42px;
+    }
+}
+
+@media (max-width: 400px) {
+
+    .container {
+        padding-left: 12px;
+        padding-right: 12px;
+    }
+
+    .detect-heading h1,
+    .history-header h1,
+    .dashboard-header h1,
+    .admin-page-heading h1 {
+        font-size: 23px;
+    }
+
+    .detect-upload-card,
+    .result-media-card,
+    .result-information-card,
+    .frame-results-card {
+        padding: 14px;
+    }
+
+    .history-filter-card {
+        padding: 13px;
+    }
+}

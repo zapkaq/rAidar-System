@@ -1,0 +1,352 @@
+﻿@{
+    ViewData["Title"] = "Home";
+}
+
+<!-- Hero Section -->
+<section class="home-hero">
+    <div class="container">
+        <div class="row align-items-center gy-5">
+            <div class="col-lg-7">
+                <span class="home-eyebrow">
+                    AI-POWERED MEDIA DETECTION
+                </span>
+
+                <h1 class="home-title">
+                    Identify Synthetic Media.<br />
+                    <span>Build Digital Trust.</span>
+                </h1>
+
+                <p class="home-description">
+                    rAIdar is an AI-powered platform designed to analyze
+                    digital media and help identify potentially manipulated
+                    or AI-generated images, videos, and audio.
+                </p>
+
+                <div class="d-flex flex-wrap gap-3 mt-4">
+                    <a asp-controller="Detect"
+                       asp-action="Index"
+                       class="btn btn-primary btn-lg home-primary-btn">
+                        Start Detection
+                    </a>
+
+                    <a href="#capabilities"
+                       class="btn btn-outline-primary btn-lg home-secondary-btn">
+                        Explore Features
+                    </a>
+                </div>
+
+                <div class="home-trust-note mt-4">
+                    <span class="trust-dot"></span>
+                    Supporting digital media authenticity analysis
+                </div>
+            </div>
+
+            <div class="col-lg-5">
+                <div class="hero-visual">
+                    <div class="hero-visual-top">
+                        <span class="visual-status"></span>
+                        MEDIA ANALYSIS PLATFORM
+                    </div>
+
+                    <div class="hero-symbol">
+                        <div class="hero-circle circle-one"></div>
+                        <div class="hero-circle circle-two"></div>
+                        <div class="hero-center">
+                            <span>AI</span>
+                        </div>
+                    </div>
+
+                    <div class="hero-visual-bottom">
+                        <div>
+                            <strong>IMAGE</strong>
+                            <span>Analysis</span>
+                        </div>
+                        <div>
+                            <strong>VIDEO</strong>
+                            <span>Analysis</span>
+                        </div>
+                        <div>
+                            <strong>AUDIO</strong>
+                            <span>Analysis</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Capabilities -->
+<section id="capabilities" class="home-section">
+    <div class="container">
+        <div class="section-heading">
+            <span class="section-eyebrow">OUR CAPABILITIES</span>
+            <h2>One Platform. Three Media Types.</h2>
+            <p>
+                Analyze different forms of digital content using
+                rAIdar's integrated detection capabilities.
+            </p>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="capability-card h-100">
+                    <div class="capability-icon image-icon">IMG</div>
+                    <h4>Image Detection</h4>
+                    <p>
+                        Analyze uploaded images to identify signs of
+                        AI-generated or manipulated facial content
+                        using a trained CNN model.
+                    </p>
+                    <a asp-controller="Detect"
+                       asp-action="Index"
+                       class="capability-link">
+                        Analyze media <span>→</span>
+                    </a>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="capability-card h-100">
+                    <div class="capability-icon video-icon">VID</div>
+                    <h4>Video Detection</h4>
+                    <p>
+                        Examine video content through frame-based
+                        analysis to help identify potentially
+                        manipulated visual media.
+                    </p>
+                    <a asp-controller="Detect"
+                       asp-action="Index"
+                       class="capability-link">
+                        Analyze media <span>→</span>
+                    </a>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="capability-card h-100">
+                    <div class="capability-icon audio-icon">AUD</div>
+                    <h4>Audio Detection</h4>
+                    <p>
+                        Analyze uploaded audio using an AI-based
+                        voice detection model to help identify
+                        potentially synthetic speech.
+                    </p>
+                    <a asp-controller="Detect"
+                       asp-action="Index"
+                       class="capability-link">
+                        Analyze media <span>→</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Blockchain Verification -->
+<section class="home-section" id="blockchain-verification">
+    <div class="container">
+        <div class="section-heading">
+            <span class="section-eyebrow">
+                BLOCKCHAIN TECHNOLOGY
+            </span>
+
+            <h2>Verify Media Integrity with Blockchain</h2>
+
+            <p>
+                rAIdar uses SHA-256 fingerprinting and Ethereum
+                blockchain technology to register and verify
+                digital media records.
+            </p>
+        </div>
+
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                <div class="capability-card blockchain-card">
+                    <div class="row align-items-center gy-4">
+
+                        <div class="col-md-7">
+                            <div class="capability-icon">
+                                <i class="bi bi-shield-lock"></i>
+                            </div>
+
+                            <h4>Blockchain Media Verification</h4>
+
+                            <p>
+                                Generate a unique SHA-256 fingerprint
+                                from your uploaded media and check
+                                whether it has been registered on
+                                the Ethereum blockchain.
+                            </p>
+
+                            <div class="d-flex flex-wrap gap-2 mt-3">
+                                <span class="badge bg-light text-dark">
+                                    SHA-256
+                                </span>
+
+                                <span class="badge bg-light text-dark">
+                                    Ethereum
+                                </span>
+
+                                <span class="badge bg-light text-dark">
+                                    Sepolia Testnet
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="col-md-5">
+                            <div class="blockchain-action-panel">
+                                <h5>Explore Blockchain Verification</h5>
+
+                                <p>
+                                    Register or verify your digital
+                                    media fingerprint.
+                                </p>
+
+                                <a asp-controller="BlockchainPage"
+                                   asp-action="Index"
+                                   class="btn btn-primary w-100">
+                                    Open Blockchain Verification
+                                    <i class="bi bi-arrow-right ms-2"></i>
+                                </a>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- How It Works -->
+<section class="process-section">
+    <div class="container">
+        <div class="section-heading">
+            <span class="section-eyebrow">SIMPLE WORKFLOW</span>
+            <h2>How rAIdar Works</h2>
+            <p>
+                A straightforward process for analyzing digital media.
+            </p>
+        </div>
+
+        <div class="row g-4 process-grid">
+            <div class="col-md-3">
+                <div class="process-card">
+                    <span class="process-number">01</span>
+                    <h5>Upload Media</h5>
+                    <p>
+                        Select an image, video, or audio file
+                        from your device.
+                    </p>
+                </div>
+            </div>
+
+            <div class="col-md-3">
+                <div class="process-card">
+                    <span class="process-number">02</span>
+                    <h5>Media Processing</h5>
+                    <p>
+                        The uploaded file is prepared for
+                        the appropriate detection process.
+                    </p>
+                </div>
+            </div>
+
+            <div class="col-md-3">
+                <div class="process-card">
+                    <span class="process-number">03</span>
+                    <h5>AI Analysis</h5>
+                    <p>
+                        The corresponding AI detection
+                        model analyzes the submitted media.
+                    </p>
+                </div>
+            </div>
+
+            <div class="col-md-3">
+                <div class="process-card">
+                    <span class="process-number">04</span>
+                    <h5>View Results</h5>
+                    <p>
+                        Review the system's classification
+                        and available prediction information.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- About -->
+<section class="home-section">
+    <div class="container">
+        <div class="row align-items-center gy-4">
+            <div class="col-lg-5">
+                <span class="section-eyebrow">ABOUT THE PLATFORM</span>
+                <h2 class="about-title">
+                    Technology for a More Informed Digital World
+                </h2>
+            </div>
+
+            <div class="col-lg-7">
+                <p class="about-description">
+                    rAIdar is a research-based web application developed
+                    to support the detection of AI-generated and
+                    manipulated digital media. It integrates web
+                    technologies and AI-based detection services to
+                    analyze images, videos, and audio through a
+                    unified platform.
+                </p>
+
+                <p class="about-description">
+                    By presenting the results of media analysis,
+                    rAIdar aims to help users make more informed
+                    assessments of digital content.
+                </p>
+            </div>
+        </div>
+
+        <div class="technology-strip mt-5">
+            <div>
+                <strong>ASP.NET Core MVC</strong>
+                <span>Web Application</span>
+            </div>
+            <div>
+                <strong>Python Flask</strong>
+                <span>API Integration</span>
+            </div>
+            <div>
+                <strong>TensorFlow</strong>
+                <span>AI Model Technology</span>
+            </div>
+            <div>
+                <strong>Deep Learning</strong>
+                <span>Media Analysis</span>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Call to Action -->
+<section class="home-cta">
+    <div class="container text-center">
+        <span class="section-eyebrow">EXPLORE RAIdar</span>
+        <h2>Take a Closer Look at Your Digital Media.</h2>
+        <p>
+            Start an analysis and explore the detection capabilities
+            of the rAIdar platform.
+        </p>
+
+        <a asp-controller="Detect"
+           asp-action="Index"
+           class="btn btn-light btn-lg home-cta-btn">
+            Start Detection
+        </a>
+
+        <div class="cta-disclaimer">
+            Detection results are AI-generated assessments and
+            should not be treated as definitive proof of authenticity.
+        </div>
+    </div>
+</section>

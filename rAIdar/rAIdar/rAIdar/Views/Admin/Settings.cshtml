@@ -1,0 +1,228 @@
+﻿@{
+    ViewData["Title"] = "System Settings";
+}
+
+<style>
+    img.raidar-logo-mark.raidar-brand-image {
+        display: inline-block;
+        width: 56px;
+        height: 56px;
+        object-fit: contain;
+        background: transparent;
+        border: none;
+        border-radius: 0;
+        box-shadow: none;
+        padding: 0;
+        flex-shrink: 0;
+    }
+
+    .raidar-about-logo {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+    }
+</style>
+
+<div class="raidar-page">
+
+    <div class="raidar-page-header">
+        <div>
+            <div class="raidar-eyebrow">
+                ADMINISTRATION
+            </div>
+
+            <h1 class="raidar-page-title">
+                System Settings
+            </h1>
+
+            <p class="raidar-page-subtitle">
+                View the current system information and application details.
+            </p>
+        </div>
+
+        <a asp-controller="Admin"
+           asp-action="Dashboard"
+           class="raidar-outline-btn">
+
+            <i class="bi bi-arrow-left"></i>
+            Back to Dashboard
+
+        </a>
+    </div>
+
+    <div class="raidar-settings-layout">
+
+        <section class="raidar-panel raidar-settings-main">
+
+            <div class="raidar-panel-header">
+                <div>
+                    <h3>System Information</h3>
+                    <p>General information about the rAIdar platform.</p>
+                </div>
+
+                <span class="raidar-settings-icon">
+                    <i class="bi bi-gear"></i>
+                </span>
+            </div>
+
+            <div class="raidar-settings-list">
+
+                <!-- SYSTEM NAME -->
+                <div class="raidar-settings-item">
+
+                    <div class="raidar-settings-label">
+
+                        <span class="raidar-settings-item-icon">
+                            <i class="bi bi-window"></i>
+                        </span>
+
+                        <div>
+                            <strong>System Name</strong>
+                            <small>Application name</small>
+                        </div>
+
+                    </div>
+
+                    <span class="raidar-settings-value">
+                        rAIdar
+                    </span>
+
+                </div>
+
+                <!-- AI MODEL -->
+                <div class="raidar-settings-item">
+
+                    <div class="raidar-settings-label">
+
+                        <span class="raidar-settings-item-icon">
+                            <i class="bi bi-cpu"></i>
+                        </span>
+
+                        <div>
+                            <strong>AI Model</strong>
+                            <small>Detection technology</small>
+                        </div>
+
+                    </div>
+
+                    <span class="raidar-settings-value">
+                        TensorFlow CNN
+                    </span>
+
+                </div>
+
+                <!-- FRAMEWORK -->
+                <div class="raidar-settings-item">
+
+                    <div class="raidar-settings-label">
+
+                        <span class="raidar-settings-item-icon">
+                            <i class="bi bi-code-slash"></i>
+                        </span>
+
+                        <div>
+                            <strong>Framework</strong>
+                            <small>Application technologies</small>
+                        </div>
+
+                    </div>
+
+                    <span class="raidar-settings-value">
+                        ASP.NET Core MVC + Flask
+                    </span>
+
+                </div>
+
+                <!-- APPLICATION VERSION -->
+                <div class="raidar-settings-item">
+
+                    <div class="raidar-settings-label">
+
+                        <span class="raidar-settings-item-icon">
+                            <i class="bi bi-tag"></i>
+                        </span>
+
+                        <div>
+                            <strong>Version</strong>
+                            <small>Application release</small>
+                        </div>
+
+                    </div>
+
+                    <span class="raidar-settings-value">
+                        1.0
+                    </span>
+
+                </div>
+
+                <!-- SYSTEM STATUS -->
+                <div class="raidar-settings-item">
+
+                    <div class="raidar-settings-label">
+
+                        <span class="raidar-settings-item-icon">
+                            <i class="bi bi-activity"></i>
+                        </span>
+
+                        <div>
+                            <strong>System Status</strong>
+                            <small>Reported application status</small>
+                        </div>
+
+                    </div>
+
+                    <span class="raidar-settings-status">
+                        <span class="raidar-status-dot"></span>
+                        Running
+                    </span>
+
+                </div>
+
+            </div>
+
+        </section>
+
+        <!-- ABOUT THE SYSTEM -->
+        <aside class="raidar-panel raidar-settings-about">
+
+            <div class="raidar-about-logo">
+
+                <!-- OFFICIAL rAIdar LOGO -->
+                <img class="raidar-logo-mark raidar-brand-image"
+                     src="~/images/raidar-logo.png"
+                     asp-append-version="true"
+                     alt="" />
+
+                <div>
+                    <h3>rAIdar</h3>
+                    <p>AI-Powered Media Detection</p>
+                </div>
+
+            </div>
+
+            <div class="raidar-about-divider"></div>
+
+            <h4>About the System</h4>
+
+            <p>
+                rAIdar is designed to help users examine digital media
+                and identify potential AI-generated or manipulated content.
+            </p>
+
+            <div class="raidar-about-note">
+
+                <i class="bi bi-info-circle"></i>
+
+                <span>
+                    This page displays configured system information.
+                    The Running label is a displayed status, not a live
+                    health check of the detection services.
+                </span>
+
+            </div>
+
+        </aside>
+
+    </div>
+
+</div>

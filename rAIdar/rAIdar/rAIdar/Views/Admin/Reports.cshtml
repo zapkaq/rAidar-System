@@ -1,0 +1,293 @@
+﻿
+@model List<rAIdar.Models.DetectionHistory>
+
+@{
+    ViewData["Title"] = "Detection Reports";
+
+    var totalScans = (int)(ViewBag.TotalScans ?? 0);
+    var realImages = (int)(ViewBag.RealImages ?? 0);
+    var fakeImages = (int)(ViewBag.FakeImages ?? 0);
+
+    var searchValue = ViewBag.Search as string ?? "";
+    var selectedPrediction = ViewBag.SelectedPrediction as string ?? "ALL";
+}
+
+<div class="raidar-page">
+    <div class="container py-5">
+
+        <!-- Page Header -->
+        <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
+            <div>
+                <span class="raidar-eyebrow">ADMINISTRATION</span>
+                <h2 class="raidar-page-title mt-2">Detection Reports</h2>
+                <p class="raidar-page-subtitle mb-0">
+                    Search, filter, and review recorded detection activities.
+                </p>
+            </div>
+
+            <a asp-controller="Admin"
+               asp-action="Dashboard"
+               class="btn raidar-outline-btn">
+                <i class="bi bi-arrow-left me-2"></i>
+                Back to Dashboard
+            </a>
+        </div>
+
+        <!-- Summary Cards -->
+        <div class="row g-3 mb-4">
+
+            <div class="col-md-4">
+                <div class="raidar-stat-card">
+                    <div class="raidar-stat-icon blue">
+                        <i class="bi bi-files"></i>
+                    </div>
+                    <div>
+                        <div class="raidar-stat-label">TOTAL SCANS</div>
+                        <div class="raidar-stat-value">@totalScans</div>
+                        <div class="raidar-stat-description">Matching detection records</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="raidar-stat-card">
+                    <div class="raidar-stat-icon green">
+                        <i class="bi bi-check-circle"></i>
+                    </div>
+                    <div>
+                        <div class="raidar-stat-label">REAL PREDICTIONS</div>
+                        <div class="raidar-stat-value">@realImages</div>
+                        <div class="raidar-stat-description">Records classified as REAL</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="raidar-stat-card">
+                    <div class="raidar-stat-icon red">
+                        <i class="bi bi-exclamation-circle"></i>
+                    </div>
+                    <div>
+                        <div class="raidar-stat-label">FAKE PREDICTIONS</div>
+                        <div class="raidar-stat-value">@fakeImages</div>
+                        <div class="raidar-stat-description">Records classified as FAKE</div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Search and Filters -->
+        <div class="raidar-panel mb-4">
+            <div class="raidar-panel-header">
+                <div>
+                    <h5 class="mb-1">Filter Detection Records</h5>
+                    <p class="mb-0">Find records using a filename, username, email, or prediction.</p>
+                </div>
+                <span class="raidar-count-badge">REPORT FILTERS</span>
+            </div>
+
+            <form asp-controller="Admin"
+                  asp-action="Reports"
+                  method="get"
+                  class="raidar-report-form">
+
+                <div class="row g-3 align-items-end">
+
+                    <div class="col-lg-6">
+                        <label for="reportSearch" class="form-label raidar-form-label">
+                            Search
+                        </label>
+                        <div class="raidar-report-search">
+                            <i class="bi bi-search"></i>
+                            <input id="reportSearch"
+                                   type="text"
+                                   name="search"
+                                   value="@searchValue"
+                                   class="form-control"
+                                   placeholder="Search filename, username, or email..." />
+                        </div>
+                    </div>
+
+                    <div class="col-lg-3 col-md-6">
+                        <label for="predictionFilter" class="form-label raidar-form-label">
+                            Prediction
+                        </label>
+                        <select id="predictionFilter"
+                                name="prediction"
+                                class="form-select raidar-report-select">
+                            <option value="ALL" selected="@(selectedPrediction == "ALL")">
+                                All Predictions
+                            </option>
+                            <option value="REAL" selected="@(selectedPrediction == "REAL")">
+                                REAL
+                            </option>
+                            <option value="FAKE" selected="@(selectedPrediction == "FAKE")">
+                                FAKE
+                            </option>
+                        </select>
+                    </div>
+
+                    <div class="col-lg-3 col-md-6">
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn raidar-filter-btn flex-grow-1">
+                                <i class="bi bi-funnel me-1"></i>
+                                Apply
+                            </button>
+
+                            <a asp-controller="Admin"
+                               asp-action="Reports"
+                               class="btn raidar-reset-btn">
+                                Reset
+                            </a>
+                        </div>
+                    </div>
+
+                </div>
+            </form>
+        </div>
+
+        <!-- Reports Table -->
+        <div class="raidar-panel">
+
+            <div class="raidar-panel-header">
+                <div>
+                    <h5 class="mb-1">Detection History</h5>
+                    <p class="mb-0">Recorded results matching your selected filters.</p>
+                </div>
+
+                <span class="raidar-count-badge">
+                    @totalScans Records
+                </span>
+            </div>
+
+            @if (Model == null || !Model.Any())
+            {
+                <div class="raidar-report-empty">
+                    <div class="raidar-report-empty-icon">
+                        <i class="bi bi-folder2-open"></i>
+                    </div>
+                    <h5>No detection reports found</h5>
+                    <p>
+                        There are no records matching your current search or filter.
+                        Try changing your search criteria.
+                    </p>
+                    <a asp-controller="Admin"
+                       asp-action="Reports"
+                       class="btn raidar-filter-btn mt-2">
+                        Clear Filters
+                    </a>
+                </div>
+            }
+            else
+            {
+                <div class="table-responsive">
+                    <table class="table raidar-table raidar-reports-table align-middle mb-0">
+
+                        <thead>
+                            <tr>
+                                <th>USER</th>
+                                <th>MEDIA FILE</th>
+                                <th>PREDICTION</th>
+                                <th>CONFIDENCE</th>
+                                <th>RAW PREDICTION</th>
+                                <th>DATE ANALYZED</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            @foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td>
+                                        <div class="raidar-report-user">
+                                            <div class="raidar-avatar">
+                                                @(string.IsNullOrWhiteSpace(item.User?.Username)
+                                                    ? "?"
+                                                    : item.User.Username.Substring(0, 1).ToUpper())
+                                            </div>
+                                            <div>
+                                                <div class="raidar-user-name">
+                                                    @(item.User?.Username ?? "Unknown User")
+                                                </div>
+                                                <div class="raidar-user-username">
+                                                    @(item.User?.Email ?? "No email available")
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </td>
+
+                                    <td>
+                                        <div class="raidar-report-file">
+                                            <div class="raidar-file-icon">
+                                                <i class="bi bi-file-earmark-play"></i>
+                                            </div>
+                                            <span class="raidar-report-filename"
+                                                  title="@item.FileName">
+                                                @item.FileName
+                                            </span>
+                                        </div>
+                                    </td>
+
+                                    <td>
+                                        @if (item.Prediction == "REAL")
+                                        {
+                                            <span class="raidar-status active">
+                                                <span></span> REAL
+                                            </span>
+                                        }
+                                        else if (item.Prediction == "FAKE")
+                                        {
+                                            <span class="raidar-status inactive">
+                                                <span></span> FAKE
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="raidar-report-neutral">
+                                                @(item.Prediction ?? "UNKNOWN")
+                                            </span>
+                                        }
+                                    </td>
+
+                                    <td>
+                                        <strong class="raidar-report-confidence">
+                                            @item.Confidence.ToString("0.00")%
+                                        </strong>
+                                    </td>
+
+                                    <td>
+                                        <span class="raidar-raw-value">
+                                            @item.RawPrediction.ToString("0.000000")
+                                        </span>
+                                    </td>
+
+                                    <td>
+                                        <div class="raidar-report-date">
+                                            <strong>@item.DateAnalyzed.ToString("MMM dd, yyyy")</strong>
+                                            <span>@item.DateAnalyzed.ToString("hh:mm tt")</span>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+
+                    </table>
+                </div>
+            }
+
+            <div class="raidar-panel-footer">
+                Showing <strong>@(Model?.Count ?? 0)</strong>
+                matching detection records
+            </div>
+
+        </div>
+
+        <div class="raidar-report-disclaimer">
+            <i class="bi bi-info-circle me-2"></i>
+            Detection reports display stored application results. Prediction counts and confidence
+            values should not be interpreted as independently verified detection accuracy.
+        </div>
+
+    </div>
+</div>

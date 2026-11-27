@@ -1,0 +1,325 @@
+﻿@{
+    var currentController = ViewContext.RouteData.Values["controller"]?.ToString();
+    var currentAction = ViewContext.RouteData.Values["action"]?.ToString();
+
+    var userId = Context.Session.GetInt32("UserId");
+    var username = Context.Session.GetString("Username");
+    var role = Context.Session.GetString("Role");
+
+    bool isLoggedIn = userId != null;
+    bool isAdmin = string.Equals(
+        role,
+        "Admin",
+        StringComparison.OrdinalIgnoreCase
+    );
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>@ViewData["Title"] - rAIdar</title>
+
+    <!-- OFFICIAL rAIdar FAVICON -->
+    <link rel="icon"
+          type="image/png"
+          href="~/images/raidar-logo.png"
+          asp-append-version="true" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+          rel="stylesheet" />
+
+    <link rel="stylesheet"
+          href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+
+    <link rel="stylesheet"
+          href="~/css/site.css"
+          asp-append-version="true" />
+
+    <link rel="stylesheet"
+          href="~/rAIdar.styles.css"
+          asp-append-version="true" />
+
+    <link rel="stylesheet"
+          href="~/css/raidar-theme.css"
+          asp-append-version="true" />
+
+    <!-- MOBILE RESPONSIVE STYLESHEET -->
+    <link rel="stylesheet"
+          href="~/css/raidar-mobile.css"
+          asp-append-version="true" />
+
+    <!-- OFFICIAL LOGO STYLING -->
+    <style>
+            .raidar-brand {
+                display: inline-flex;
+                align-items: center;
+                gap: 10px;
+            }
+
+            .raidar-brand img.brand-mark.raidar-brand-image {
+                display: inline-block;
+                width: 38px;
+                height: 38px;
+                object-fit: contain;
+                background: transparent;
+                border: none;
+                border-radius: 0;
+                box-shadow: none;
+                padding: 0;
+                flex-shrink: 0;
+            }
+
+            .footer-brand {
+                display: inline-flex;
+                align-items: center;
+                gap: 10px;
+            }
+
+            .footer-brand img.footer-brand-mark {
+                display: inline-block;
+                width: 40px;
+                height: 40px;
+                object-fit: contain;
+                background: transparent;
+                border: none;
+                border-radius: 0;
+                box-shadow: none;
+                padding: 0;
+                flex-shrink: 0;
+            }
+    </style>
+
+    @await RenderSectionAsync("Styles", required: false)
+</head>
+
+<body>
+
+    <!-- NAVIGATION -->
+    <nav class="navbar navbar-expand-lg raidar-navbar sticky-top">
+        <div class="container">
+
+            <a class="navbar-brand raidar-brand"
+               asp-controller="Home"
+               asp-action="Index">
+
+                <!-- OFFICIAL rAIdar LOGO -->
+                <img class="brand-mark raidar-brand-image"
+                     src="~/images/raidar-logo.png"
+                     asp-append-version="true"
+                     alt="" />
+
+                <span>rAIdar</span>
+
+            </a>
+
+            <button class="navbar-toggler raidar-toggler"
+                    type="button"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#raidarNavbar"
+                    aria-controls="raidarNavbar"
+                    aria-expanded="false"
+                    aria-label="Toggle navigation">
+
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="raidarNavbar">
+
+                <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-2">
+
+                    <!-- HOME -->
+                    <li class="nav-item">
+                        <a class="nav-link @(currentController == "Home" && currentAction == "Index" ? "active" : "")"
+                           asp-controller="Home"
+                           asp-action="Index">
+                            Home
+                        </a>
+                    </li>
+
+                    <!-- DETECT -->
+                    <li class="nav-item">
+                        <a class="nav-link @(currentController == "Detect" ? "active" : "")"
+                           asp-controller="Detect"
+                           asp-action="Index">
+                            Detect
+                        </a>
+                    </li>
+
+                    <!-- ABOUT -->
+                    <li class="nav-item">
+                        <a class="nav-link @(currentController == "Home" && currentAction == "About" ? "active" : "")"
+                           asp-controller="Home"
+                           asp-action="About">
+                            About
+                        </a>
+                    </li>
+
+                    @if (isLoggedIn)
+                    {
+                        @if (isAdmin)
+                        {
+                            <!-- ADMIN DASHBOARD -->
+                            <li class="nav-item">
+                                <a class="nav-link @(currentController == "Admin" ? "active" : "")"
+                                   asp-controller="Admin"
+                                   asp-action="Dashboard">
+                                    Admin Dashboard
+                                </a>
+                            </li>
+                        }
+                        else
+                        {
+                            <!-- USER DASHBOARD -->
+                            <li class="nav-item">
+                                <a class="nav-link @(currentController == "Dashboard" ? "active" : "")"
+                                   asp-controller="Dashboard"
+                                   asp-action="Index">
+                                    Dashboard
+                                </a>
+                            </li>
+                        }
+
+                        <!-- USERNAME -->
+                        <li class="nav-item">
+                            <span class="nav-link">
+                                Hello, @username
+                            </span>
+                        </li>
+
+                        <!-- LOGOUT -->
+                        <li class="nav-item">
+                            <form asp-controller="Account"
+                                  asp-action="Logout"
+                                  method="post"
+                                  class="d-inline">
+
+                                @Html.AntiForgeryToken()
+
+                                <button type="submit"
+                                        class="btn raidar-login-btn">
+                                    Logout
+                                </button>
+
+                            </form>
+                        </li>
+                    }
+                    else
+                    {
+                        <!-- LOGIN -->
+                        <li class="nav-item ms-lg-3">
+                            <a class="btn raidar-login-btn"
+                               asp-controller="Account"
+                               asp-action="Login">
+                                Login
+                            </a>
+                        </li>
+
+                        <!-- REGISTER -->
+                        <li class="nav-item">
+                            <a class="btn raidar-register-btn"
+                               asp-controller="Account"
+                               asp-action="Register">
+                                Get Started
+                            </a>
+                        </li>
+                    }
+
+                </ul>
+
+            </div>
+        </div>
+    </nav>
+
+    <!-- PAGE CONTENT -->
+    <main class="raidar-main">
+        @RenderBody()
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="raidar-footer">
+        <div class="container">
+
+            <div class="row gy-4">
+
+                <div class="col-lg-6">
+
+                    <a class="footer-brand"
+                       asp-controller="Home"
+                       asp-action="Index">
+
+                        <!-- OFFICIAL rAIdar FOOTER LOGO -->
+                        <img class="footer-brand-mark raidar-brand-image"
+                             src="~/images/raidar-logo.png"
+                             asp-append-version="true"
+                             alt="" />
+
+                        <span>rAIdar</span>
+
+                    </a>
+
+                    <p class="footer-description">
+                        Real-Time AI-Powered Deepfake and Synthetic Media Detection Platform.
+                    </p>
+
+                </div>
+
+                <div class="col-6 col-lg-3">
+
+                    <h6>Navigation</h6>
+
+                    <ul class="footer-links">
+                        <li>
+                            <a asp-controller="Home" asp-action="Index">
+                                Home
+                            </a>
+                        </li>
+
+                        <li>
+                            <a asp-controller="Detect" asp-action="Index">
+                                Detect
+                            </a>
+                        </li>
+
+                        <li>
+                            <a asp-controller="Home" asp-action="About">
+                                About
+                            </a>
+                        </li>
+                    </ul>
+
+                </div>
+
+                <div class="col-6 col-lg-3">
+
+                    <h6>Technology</h6>
+
+                    <p class="footer-description">
+                        ASP.NET Core MVC<br />
+                        Python Flask API<br />
+                        AI-Based Media Detection
+                    </p>
+
+                </div>
+
+            </div>
+
+            <div class="footer-bottom">
+                © @DateTime.Now.Year rAIdar. All Rights Reserved.
+            </div>
+
+        </div>
+    </footer>
+
+    <!-- SCRIPTS -->
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+
+    @await RenderSectionAsync("Scripts", required: false)
+
+</body>
+</html>

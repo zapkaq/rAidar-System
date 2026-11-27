@@ -1,0 +1,168 @@
+html {
+    font-size: 16px;
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    background: #f8fafc;
+    color: #1e293b;
+    margin: 0;
+    padding: 0;
+}
+
+/* Navbar */
+
+.navbar {
+    padding: 15px 0;
+}
+
+.navbar-brand {
+    font-size: 30px;
+    font-weight: 700;
+}
+
+.nav-link {
+    font-weight: 500;
+    transition: .3s;
+}
+
+    .nav-link:hover {
+        color: #dbeafe !important;
+    }
+
+/* Buttons */
+
+.btn {
+    border-radius: 50px;
+    padding: 12px 30px;
+    font-weight: 600;
+    transition: .3s;
+}
+
+.btn-primary {
+    background: #2563eb;
+    border: none;
+}
+
+    .btn-primary:hover {
+        background: #1d4ed8;
+        transform: translateY(-2px);
+    }
+
+.btn-outline-primary:hover {
+    color: white;
+}
+
+/* Hero */
+
+section:first-child {
+    padding-top: 100px;
+    padding-bottom: 100px;
+}
+
+.display-2,
+.display-3 {
+    font-weight: 700;
+}
+
+.lead {
+    line-height: 1.8;
+}
+
+/* Cards */
+
+.card {
+    border: none;
+    border-radius: 18px;
+    transition: .3s;
+}
+
+    .card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 15px 40px rgba(0,0,0,.12);
+    }
+
+/* Icons */
+
+.display-4,
+.display-5 {
+    color: #2563eb;
+}
+
+/* Footer */
+
+footer {
+    margin-top: 100px;
+}
+
+    footer h4,
+    footer h5 {
+        font-weight: 600;
+    }
+
+    footer a:hover {
+        color: #93c5fd !important;
+    }
+
+/* Upload Area */
+
+.upload-area {
+    border: 3px dashed #cbd5e1;
+    border-radius: 20px;
+    background: white;
+    transition: .3s;
+}
+
+    .upload-area:hover {
+        border-color: #2563eb;
+        background: #f8fbff;
+    }
+
+/* Image Preview */
+
+#imagePreview {
+    border-radius: 15px;
+    max-height: 320px;
+}
+
+/* Progress */
+
+.progress {
+    height: 28px;
+    border-radius: 20px;
+}
+
+.progress-bar {
+    font-weight: 600;
+}
+
+/* Result Badges */
+
+.badge {
+    padding: 10px 18px;
+    font-size: 15px;
+}
+
+/* Feature Cards */
+
+.card-body h4 {
+    font-weight: 600;
+}
+
+/* Responsive */
+
+@media (max-width:768px) {
+
+    .display-2 {
+        font-size: 42px;
+    }
+
+    .display-3 {
+        font-size: 36px;
+    }
+
+    .lead {
+        font-size: 18px;
+    }
+}
